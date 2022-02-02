@@ -1,5 +1,6 @@
 mjollnir_api/__pycache__
 mjollnir_api/certificates
+mjollnir_api/mjollnir-c2.sqlite
 mjollnir_cli/lib/__pycache__
 mjollnir_cli/history.txt
 private_files
