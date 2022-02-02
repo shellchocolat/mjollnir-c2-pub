@@ -148,7 +148,7 @@ agent_meta = {
 ##################################################################
 
 agent_interaction_commands =[
-	'info', 'back'
+	'info', 'back', 'group'
 ]
 
 agent_interaction_commands += main_commands
@@ -169,6 +169,7 @@ agent_interaction_family_colors = {
 agent_interaction_meta = {
 	'back': HTML('Return to the previous menu.'),
 	'info': HTML('Display some nice info about the agent'),
+	'group': HTML('Edit agent group.\n Example: <i>group new_group</i>'),
 	# ...
 }
 
