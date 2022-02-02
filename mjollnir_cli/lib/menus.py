@@ -196,6 +196,16 @@ class AgentInteraction(object):
 		agent_name = self.agent.get_agent_name(agent_uid)
 		return agent_name
 
+	def menu_edit_agent_group(self, agent_uid, argInput):
+		L = len(argInput)
+		if L >= 2:
+			agent_group = argInput[1]
+			r = self.agent.edit_agent_group(agent_uid, agent_group)
+		else:
+			print("[-] Cannot change the agent group: " + agent_uid)
+		return r
+
+
 	def submit_task(self, agent_uid, argInput):
 		cmd_request = argInput[0].upper()
 		cmd_arg = ""

@@ -10,6 +10,7 @@ class Agent():
 		self.misc = misc
 
 	def generate_agent(self, agent_name, agent_param):
+		# POST mjollnir/hidden_route/agent
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
 		endpoint = self.config["endpoints"]["agent"]
 		data = agent_param
@@ -27,6 +28,7 @@ class Agent():
 			return False
 
 	def list_agents(self):
+		# GET mjollnir/hidden_route/agents
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
 		endpoint = self.config["endpoints"]["agents"]
 		r = self.s.get(url+endpoint)
@@ -57,6 +59,7 @@ class Agent():
 		return True
 
 	def delete_agent(self, agents_uid):
+		# DELETE mjollnir/hidden_route/agent
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
 		endpoint = self.config["endpoints"]["agent"]
 		for agent_uid in agents_uid:
@@ -69,7 +72,28 @@ class Agent():
 				
 		return True
 
+	def edit_agent_group(self, agent_uid, agent_group):
+		# POST mjollnir/hidden_route/agent/agent_uid
+		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
+		endpoint = self.config["endpoints"]["agent"] + "/" + agent_uid
+		data = {}
+		data["agent_uid"] = agent_uid
+		data["agent_group"] = agent_group
+
+		data = json.dumps(data)
+
+		data = self.misc.encrypt(data)
+		r = self.s.post(url+endpoint, data=data)
+		if r.status_code == 200:
+			print(self.misc.decrypt(r.content))
+			return True
+		else:
+			print("[-] Cannot edit the agent group: " + agent_uid)
+			return False
+
+
 	def info_agent(self, agent_uid):
+		# GET mjollnir/hidden_route/agent/agent_uid
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
 		endpoint = self.config["endpoints"]["agent"]
 		r = self.s.get(url+endpoint+"/"+agent_uid)
@@ -99,6 +123,7 @@ class Agent():
 		return values
 
 	def get_agent_name(self, agent_uid):
+		# GET mjollnir/hidden_route/agent/agent_uid
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
 		endpoint = self.config["endpoints"]["agent"]
 		r = self.s.get(url+endpoint+"/"+agent_uid)

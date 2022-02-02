@@ -374,6 +374,8 @@ def main():
 		elif mjollnir_menus["agent_interaction_menu"] == True:
 			if cmd.lower() == "info":
 				menus_agent_interaction.menu_current_agent_info(global_agent_uid)
+			elif cmd.lower() == "group":
+				menus_agent_interaction.menu_edit_agent_group(global_agent_uid, argInput)
 			else:
 				agent_name = menus_agent_interaction.menu_current_agent_name(global_agent_uid)
 				agent_commands_interaction = config["agent"]["details"][agent_name]["commands"]
