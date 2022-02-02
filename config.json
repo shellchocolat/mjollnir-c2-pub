@@ -1,0 +1,223 @@
+{
+    "default_user": "thor",
+    "default_user_hash": "7d564ce1f2c91f5024be1fdf37d84ffb",
+    "mjollnir_c2_url": "http://127.0.0.1:5000",
+    "proxy_mjollnir_cli": {
+        "http": "",
+        "https": ""
+    },
+    "database_path": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_api/mjollnir-c2.sqlite",
+    "crypto": {
+        "public_key_path": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_api/certificates/authent-rsa.pub",
+        "private_key_path": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_api/certificates/authent-rsa.priv"
+    },
+    "hidden_route": "/Thor-God-Of-Thunder",
+    "endpoints": {
+        "public_download": "/public",
+        "private_download": "/private",
+        "first_user": "/first_user",
+        "login": "/login",
+        "logout": "/logout",
+        "mission": "/mission",
+        "missions": "/missions",
+        "listener": "/listener",
+        "listeners": "/listeners",
+        "agent": "/agent",
+        "agents": "/agents",
+        "task": "/task",
+        "tasks": "/tasks",
+        "user": "/user",
+        "users": "/users"
+    },
+    "headers": {
+        "mission_uid": "m",
+        "user_uid": "u",
+        "agent_uid": "a",
+        "task_uid": "t"
+    },
+    "listener": {
+        "details": {
+            "http_python_example": {
+                "type": "http",
+                "parameters": ["IP", "PORT"],
+                "default_parameters": {
+                    "IP": "0.0.0.0",
+                    "PORT": "4444"
+                },
+                "parameters_info": {
+                    "IP": "Listening ip",
+                    "PORT": "Listening port"
+                },
+                "info": "bla bla bla",
+                "used_with_agents": "lin_x64_python_http",
+                "path": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_listeners/listener_http_example.py"
+            },
+            "http_python_prod": {
+                "type": "http",
+                "parameters": ["IP", "PORT"],
+                "default_parameters": {
+                    "IP": "0.0.0.0",
+                    "PORT": "4444"
+                },
+                "parameters_info": {
+                    "IP": "Listening ip",
+                    "PORT": "Listening port"
+                },
+                "info": "bla bla",
+                "used_with_agents": "",
+                "path": ""
+            },
+            "https": {
+                "type": "https",
+                "parameters": ["IP", "PORT"],
+                "default_parameters": {
+                    "IP": "0.0.0.0",
+                    "PORT": "4444"
+                },
+                "parameters_info": {
+                    "IP": "Listening ip",
+                    "PORT": "Listening port"
+                },
+                "info": "",
+                "used_with_agents": "",
+                "path": ""
+            },
+            "tcp": {
+                "type": "tcp",
+                "parameters": ["IP", "PORT"],
+                "default_parameters": {
+                    "IP": "0.0.0.0",
+                    "PORT": "4444"
+                },
+                "parameters_info": {
+                    "IP": "Listening ip",
+                    "PORT": "Listening port"
+                },
+                "info": "",
+                "used_with_agents": "",
+                "path": ""
+            },
+            "udp": {
+                "type": "udp",
+                "parameters": ["IP", "PORT"],
+                "default_parameters": {
+                    "IP": "0.0.0.0",
+                    "PORT": "4444"
+                },
+                "parameters_info": {
+                    "IP": "Listening ip",
+                    "PORT": "Listening port"
+                },
+                "info": "",
+                "used_with_agents": "",
+                "path": ""
+            },
+            "dns": {
+                "type": "dns",
+                "parameters": ["IP", "PORT"],
+                "default_parameters": {
+                    "IP": "0.0.0.0",
+                    "PORT": "4444"
+                },
+                "parameters_info": {
+                    "IP": "Listening ip",
+                    "PORT": "Listening port"
+                },
+                "info": "",
+                "used_with_agents": "",
+                "path": ""
+            },
+            "icmp": {
+                "type": "icmp",
+                "parameters": ["IP", "PORT"],
+                "default_parameters": {
+                    "IP": "0.0.0.0",
+                    "PORT": "4444"
+                },
+                "parameters_info": {
+                    "IP": "Listening ip",
+                    "PORT": "Listening port"
+                },
+                "info": "",
+                "used_with_agents": "",
+                "path": ""
+            }
+        }
+    },
+    "fileserver": {
+        "public_download": "/home/shellchocolat/mjollnir-c2-pub/public_files",
+        "private_download" : "/home/shellchocolat/mjollnir-c2-pub/private_files"
+    },
+    "agent": {
+        "details":{
+            "win_x64_python_http": {
+                "parameters": ["RHOST", "RPORT", "SLEEP_TIME", "JITTER", "FRUIT", "LOCATION", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "RHOST": "",
+                    "RPORT": "",
+                    "SLEEP_TIME": "",
+                    "JITTER": "",
+                    "FRUIT": "",
+                    "LOCATION": "",
+                    "OUTPUT_FILENAME": ""
+                },
+                "parameters_info": {
+                    "RHOST": "Remote host",
+                    "RPORT": "Remote port"
+                },
+                "builder": "path to builder",
+                "info": "win / x64 / python / http",
+                "used_with_listeners": [],
+                "stages": {
+                    "how_many": "2",
+                    "0": {
+                        "source_code": "path to source code"
+                    },
+                    "1": {
+                        "source_code": "path to source code"
+                    }
+                },
+                "commands": {
+                    "0": {
+                        "name": "CMD",
+                        "help": "Allows to execute a 'CMD' command",
+                        "example": "CMD whoami /all"
+                    }
+                }
+            },
+            "lin_x64_python_http": {
+                "parameters": ["RHOST", "RPORT", "SLEEP_TIME", "JITTER", "FRUIT", "LOCATION", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "RHOST": "127.0.0.1",
+                    "RPORT": "4444",
+                    "SLEEP_TIME": "5",
+                    "JITTER": "2",
+                    "FRUIT": "yes",
+                    "LOCATION": "private",
+                    "OUTPUT_FILENAME": "chocolate"
+                },
+                "parameters_info": {
+                    "RHOST": "Remote host",
+                    "RPORT": "Remote port"
+                },
+                "builder": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_agents/build_lin_python.sh",
+                "info": "lin / x64 / python / http",
+                "used_with_listeners": ["http_python_example"],
+                "stages": {
+                    "how_many": "1",
+                    "0": {
+                        "source_code": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_agents/agent_lin_http.py"
+                    }
+                },
+                "commands": {
+                    "0": {
+                        "name": "CMD",
+                        "help": "Allows to execute an 'sh' command",
+                        "example": "CMD whoami"
+                    }
+                }
+            }
+        }
+    }
+}
+  
