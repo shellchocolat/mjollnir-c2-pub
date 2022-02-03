@@ -32,10 +32,11 @@ import getpass
 
 print = print_formatted_text
 
-global global_agent_name, global_agent_uid, global_listener_name
+global global_agent_name, global_agent_uid, global_listener_name, global_group_name
 global_agent_name = ""
 global_agent_uid = ""
 global_listener_name = ""
+global_group_name = ""
 
 global WIDE_SPACE, SPACE
 WIDE_SPACE = ('', '     ')
@@ -79,7 +80,7 @@ message = [
 # main menu
 ##################################################################
 main_commands = [
-	'mission', 'listener', 'agent', 'task', 'launcher', 'login', 'logout', 'first_user', 'view', 'help', 'exit',
+	'mission', 'listener', 'agent', 'task', 'r-task', 'g-task', 'launcher', 'login', 'logout', 'first_user', 'help', 'exit',
 	# ...
 ]
 
@@ -101,6 +102,8 @@ main_meta = {
 	'listener': HTML('Create/Delete a listener and List all listeners (-c, -d, -l)\n Example: <i>listener -c http 192.168.0.128 9999</i>'),
 	'agent': HTML('Create/Delete/Interact/Use an agent and List all agents (-c, -d, -i, -u, -l)\n Example: <i>agent -l</i>'),
 	'task': HTML('Result for a task (-r)\n Example: <i>task -r task_uid</i>'),
+	'r-task': HTML('Create a "on registering task" for an agent_name (-c) \n Example: <i>r-task -c agent_name</i>'),
+	'g-task': HTML('Create a "group task" for an agent_group (-c) \n Example: <i>g-task -c agent_group</i>'),
 	'login': HTML('Login to the Mjollnir-api\n Example: <i>login username</i>'),
 	'first_user': HTML('Used to register the first user (can only be used once)'),
 	#'list-payloads': HTML('Example: <i>list-payloads</i> / <i>:lspld x86</i> / <i>:lspld windows</i>'),
@@ -174,7 +177,7 @@ agent_interaction_meta = {
 }
 
 ##################################################################
-# agent menu
+# listener menu
 ##################################################################
 
 listener_commands =[
@@ -205,6 +208,70 @@ listener_meta = {
 	# ...
 }
 
+##################################################################
+# on registering task menu
+##################################################################
+
+registering_task_commands =[
+	'set', 'start', 'info', 'back', 'list'
+]
+
+registering_task_commands += main_commands
+
+registering_task_command_family = {
+	'help': ':h',
+	'exit': ':q',
+}
+
+registering_task_family_colors = {
+	'x86/x64': 'ansimagenta',
+	'x86': 'ansigreen',
+	'x64': 'ansired',
+	'x86-64': 'ansiyellow',
+	# ...
+}
+
+registering_task_meta = {
+	'start': HTML('Start the listener'),
+	'set': HTML('Example: <i>set ip 127.0.0.1</i>'),
+	'back': HTML('Return to the previous menu.'),
+	'info': HTML('Display some infos about the selected agent'),
+	'list': HTML('List all availables agents'),
+	# ...
+}
+
+##################################################################
+# group task menu
+##################################################################
+
+group_task_commands =[
+	'set', 'start', 'info', 'back', 'list'
+]
+
+group_task_commands += main_commands
+
+group_task_command_family = {
+	'help': ':h',
+	'exit': ':q',
+}
+
+group_task_family_colors = {
+	'x86/x64': 'ansimagenta',
+	'x86': 'ansigreen',
+	'x64': 'ansired',
+	'x86-64': 'ansiyellow',
+	# ...
+}
+
+group_task_meta = {
+	'start': HTML('Start the listener'),
+	'set': HTML('Example: <i>set ip 127.0.0.1</i>'),
+	'back': HTML('Return to the previous menu.'),
+	'info': HTML('Display some infos about the selected agent'),
+	'list': HTML('List all availables agents'),
+	# ...
+}
+
 def displayContent(content_lst):
 	for c in content_lst:
 		print(FormattedText([
@@ -221,7 +288,9 @@ def main():
 	mjollnir_menus = {
 		"main_menu": True, 
 		"agent_menu": False,
-		"agent_interaction_menu": False
+		"agent_interaction_menu": False,
+		"registering_task_menu": False,
+		"group_task_menu": False
 		}
 	value_toolbar = "<b><style bg='ansired'>/</style></b>"
 	while 1: 
@@ -242,6 +311,13 @@ def main():
 		elif mjollnir_menus["listener_menu"] == True:
 			comp = viewer.AutoCompletion(listener_commands, listener_command_family, listener_family_colors, listener_meta)
 			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
+		elif mjollnir_menus["registering_task_menu"] == True:
+			comp = viewer.AutoCompletion(registering_task_commands, registering_task_command_family, registering_task_family_colors, registering_task_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
+		elif mjollnir_menus["group_task_menu"] == True:
+			comp = viewer.AutoCompletion(group_task_commands, group_task_command_family, group_task_family_colors, group_task_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
+			
 
 		if len(userInput) > 1:
 			argInput = userInput.split()
@@ -268,9 +344,12 @@ def main():
 			mjollnir_menus["agent_menu"] = False
 			mjollnir_menus["agent_interaction_menu"] = False
 			mjollnir_menus["listener_menu"] = False
+			mjollnir_menus["registering_task_menu"] = False
+			mjollnir_menus["group_task_menu"] = False
 			global_agent_name = ""
 			global_agent_uid = ""
 			global_listener_name = ""
+			global_group_name = ""
 			value_toolbar = "<b><style bg='ansired'>/</style></b>"
 		elif cmd.lower() == "exit" or cmd.lower() == ':q':
 			sys.exit(0)
@@ -287,24 +366,22 @@ def main():
 			else:
 				commander.manage_user(argInput)
 		elif cmd.lower() == "agent":
+			mjollnir_menus["main_menu"] = False
+			mjollnir_menus["listener_menu"] = False
+			mjollnir_menus["registering_task_menu"] = False
+			mjollnir_menus["group_task_menu"] = False
 			if len(argInput) == 1:
-				mjollnir_menus["main_menu"] = False
 				mjollnir_menus["agent_menu"] = True
 				mjollnir_menus["agent_interaction_menu"] = False
-				mjollnir_menus["listener_menu"] = False
 				value_toolbar = "<b><style bg='ansired'> AGENT</style></b>"
 			elif len(argInput) >= 3 and argInput[1] == "-i":
-				mjollnir_menus["main_menu"] = False
 				mjollnir_menus["agent_menu"] = False
 				mjollnir_menus["agent_interaction_menu"] = True
-				mjollnir_menus["listener_menu"] = False
 				global_agent_uid = argInput[2]
 				value_toolbar = "<b><style bg='ansired'> " + argInput[2] + "</style></b>"
 			elif len(argInput) >= 3 and argInput[1] == "-u":
-				mjollnir_menus["main_menu"] = False
 				mjollnir_menus["agent_menu"] = True
 				mjollnir_menus["agent_interaction_menu"] = False
-				mjollnir_menus["listener_menu"] = False
 				agent_name = argInput[2]
 				if menus_agent.menu_agent_use(agent_name):
 					global_agent_name = agent_name
@@ -312,12 +389,32 @@ def main():
 					global_agent_name = ""
 			else:
 				commander.manage_agent(argInput)
-		elif cmd.lower() == "task":
+
+		elif cmd.lower() == "r-task":
+			mjollnir_menus["main_menu"] = False
+			mjollnir_menus["agent_menu"] = False
+			mjollnir_menus["agent_interaction_menu"] = False
+			mjollnir_menus["listener_menu"] = False
+			mjollnir_menus["registering_task_menu"] = True
+			mjollnir_menus["group_task_menu"] = False
+			value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK</style></b>"
 			if len(argInput) == 1:
-				# go to task menu
-				pass
-			else:
-				commander.manage_task(argInput)
+				global_agent_name = input("agent name: ")
+			elif len(argInput) >= 3 and argInput[1] == "-c":
+				global_agent_name = argInput[2]	
+
+		elif cmd.lower() == "g-task":
+			mjollnir_menus["main_menu"] = False
+			mjollnir_menus["agent_menu"] = False
+			mjollnir_menus["agent_interaction_menu"] = False
+			mjollnir_menus["listener_menu"] = False
+			mjollnir_menus["registering_task_menu"] = False
+			mjollnir_menus["group_task_menu"] = True
+			value_toolbar = "<b><style bg='ansired'> GROUP TASK</style></b>"
+			if len(argInput) == 1:
+				global_group_name = input("group name: ")
+			elif len(argInput) >= 3 and argInput[1] == "-c":
+				global_group_name = argInput[2]	
 
 		elif cmd.lower() == "mission":
 			if len(argInput) == 1:
@@ -326,16 +423,15 @@ def main():
 			else:
 				commander.manage_mission(argInput)
 		elif cmd.lower() == "listener":
+			mjollnir_menus["main_menu"] = False
+			mjollnir_menus["agent_menu"] = False
+			mjollnir_menus["agent_interaction_menu"] = False
+			mjollnir_menus["registering_task_menu"] = False
+			mjollnir_menus["group_task_menu"] = False
+			value_toolbar = "<b><style bg='ansired'> LISTENER</style></b>"
 			if len(argInput) == 1:
-				mjollnir_menus["main_menu"] = False
-				mjollnir_menus["agent_menu"] = False
-				mjollnir_menus["agent_interaction_menu"] = False
 				mjollnir_menus["listener_menu"] = True
-				value_toolbar = "<b><style bg='ansired'> LISTENER</style></b>"
 			elif len(argInput) >= 3 and argInput[1] == "-u":
-				mjollnir_menus["main_menu"] = False
-				mjollnir_menus["agent_menu"] = False
-				mjollnir_menus["agent_interaction_menu"] = False
 				mjollnir_menus["listener_menu"] = True
 				listener_name = argInput[2]
 				if menus_listener.menu_listener_use(listener_name):
@@ -357,6 +453,12 @@ def main():
 				if len(argInput) >= 2:
 					param_value = (argInput[1], argInput[2])  # (IP, 127.0.0.1)
 					menus_listener.menu_listener_set(global_listener_name, param_value)
+			elif cmd.lower() == "use":
+				if len(argInput) >= 2:
+					listener_name = argInput[1]
+				else:
+					listener_name = input("listener name: ")
+				menus_listener.menu_listener_use(listener_name)
 
 		# AGENT MENU
 		elif mjollnir_menus["agent_menu"] == True:
@@ -370,6 +472,12 @@ def main():
 				if len(argInput) >= 2:
 					param_value = (argInput[1], argInput[2])  # (RHOST, 127.0.0.1)
 					menus_agent.menu_agent_set(global_agent_name, param_value)
+			elif cmd.lower() == "use":
+				if len(argInput) >= 2:
+					agent_name = argInput[1]
+				else:
+					agent_name = input("agent name: ")
+				menus_agent.menu_agent_use(agent_name)
 
 		# AGENT INTERACTION MENU
 		elif mjollnir_menus["agent_interaction_menu"] == True:
@@ -389,6 +497,14 @@ def main():
 				
 				if not found and cmd != "":
 					print("[-] That command does not exist (check your config file): " + cmd.upper())
+
+		# ON REGISTERING TASK MENU
+		elif mjollnir_menus["registering_task_menu"] == True:
+			print("Create a registering task for the agent: " + global_agent_name)
+
+		# GROUP TASK MENU
+		elif mjollnir_menus["group_task_menu"] == True:
+			print("Create a task for the group: " + global_group_name)
 
 		else:
 			if cmd == "":
