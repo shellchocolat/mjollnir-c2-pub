@@ -81,7 +81,7 @@ class S(BaseHTTPRequestHandler):
                 
             create_update_agent(body)
             print("[+] registration of a new agent " + body["agent_uid"])
-            on_registering_tasks = fetch_on_registering_task()
+            on_registering_tasks = fetch_on_registering_task(body["agent_name"])
             print("[*] on-registering tasks added to the pulls of task of the agent " + body["agent_uid"])
             for task in on_registering_tasks:
                 create_task_to_agent(body["agent_uid"], task)
@@ -227,11 +227,11 @@ def update_last_check(agent_uid):
     con.close()
     return True
 
-def fetch_on_registering_task():
+def fetch_on_registering_task(agent_name):
     con = sqlite3.connect(config["database_path"])
     cur = con.cursor()
 
-    cur.execute("SELECT * FROM on_registering_task ORDER BY task_created_at ASC")
+    cur.execute("SELECT * FROM on_registering_task WHERE agent_name=? ORDER BY task_created_at ASC", (agent_name,))
     rows = cur.fetchall()
 
     con.close()
@@ -239,11 +239,15 @@ def fetch_on_registering_task():
     return rows
 
 def create_task_to_agent(agent_uid, task):
+    #print(task)
     con = sqlite3.connect(config["database_path"])
     cur = con.cursor()
 
+    today = datetime.now()
+    task_created_at = today.strftime("%d/%m/%Y - %H:%M")   
+
     task_uid = str(uuid.uuid4())
-    cur.execute("INSERT INTO task (task_uid, agent_uid, cmd_request, cmd_arg) VALUES (?, ?, ?, ?)", (task_uid, agent_uid, task[3], task[4]))
+    cur.execute("INSERT INTO task (task_uid, task_created_at, agent_uid, cmd_request, cmd_arg) VALUES (?, ?, ?, ?, ?)", (task_uid, task_created_at, agent_uid, task[4], task[5]))
     con.commit()
 
     cur.execute("UPDATE task SET task_submited=False WHERE task_uid='%s'" %task_uid)

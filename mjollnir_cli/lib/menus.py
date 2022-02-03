@@ -205,6 +205,31 @@ class AgentInteraction(object):
 			print("[-] Cannot change the agent group: " + agent_uid)
 		return r
 
+	def list_task(self, agent_uid):
+		tasks = self.task.list_agent_task(agent_uid)
+		tasks = json.loads(tasks)
+		headers = ["task uid", "created at", "submited", "completed", "cmd"]
+		values = []
+		row = []
+		for k in tasks.keys():
+			task_uid = tasks[k]["task_uid"]
+			task_created_at = tasks[k]["task_created_at"]
+			task_submited = tasks[k]["task_submited"]
+			task_completed = tasks[k]["task_completed"]
+			cmd = tasks[k]["cmd_request"]
+			cmd += " " + tasks[k]["cmd_arg"]
+
+			row.append(task_uid)
+			row.append(task_created_at)
+			row.append(task_submited)
+			row.append(task_completed)
+			row.append(cmd)
+			
+			values.append(row)
+			row = []
+
+		tt.print(values, header=headers)
+		return True
 
 	def submit_task(self, agent_uid, argInput):
 		cmd_request = argInput[0].upper()

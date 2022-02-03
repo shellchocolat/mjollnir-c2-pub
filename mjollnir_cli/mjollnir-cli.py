@@ -388,7 +388,16 @@ def main():
 				else:
 					global_agent_name = ""
 			else:
+				mjollnir_menus["agent_menu"] = False
+				mjollnir_menus["agent_interaction_menu"] = True
 				commander.manage_agent(argInput)
+		
+		elif cmd.lower() == "task":
+			if len(argInput) == 1:
+				# go to task menu
+				pass
+			else:
+				commander.manage_task(argInput)
 
 		elif cmd.lower() == "r-task":
 			mjollnir_menus["main_menu"] = False
@@ -443,6 +452,7 @@ def main():
 				else:
 					global_listener_name = ""
 			else:
+				mjollnir_menus["listener_menu"] = True
 				commander.manage_listener(argInput)  
 
 		# LISTENER MENU
@@ -459,10 +469,10 @@ def main():
 					menus_listener.menu_listener_set(global_listener_name, param_value)
 			elif cmd.lower() == "use":
 				if len(argInput) >= 2:
-					listener_name = argInput[1]
+					global_listener_name = argInput[1]
 				else:
-					listener_name = input("listener name: ")
-				menus_listener.menu_listener_use(listener_name)
+					global_listener_name = input("listener name: ")
+				menus_listener.menu_listener_use(global_listener_name)
 
 		# AGENT MENU
 		elif mjollnir_menus["agent_menu"] == True:
@@ -478,10 +488,10 @@ def main():
 					menus_agent.menu_agent_set(global_agent_name, param_value)
 			elif cmd.lower() == "use":
 				if len(argInput) >= 2:
-					agent_name = argInput[1]
+					global_agent_name = argInput[1]
 				else:
-					agent_name = input("agent name: ")
-				menus_agent.menu_agent_use(agent_name)
+					global_agent_name = input("agent name: ")
+				menus_agent.menu_agent_use(global_agent_name)
 
 		# AGENT INTERACTION MENU
 		elif mjollnir_menus["agent_interaction_menu"] == True:
@@ -489,6 +499,8 @@ def main():
 				menus_agent_interaction.menu_current_agent_info(global_agent_uid)
 			elif cmd.lower() == "group":
 				menus_agent_interaction.menu_edit_agent_group(global_agent_uid, argInput)
+			elif cmd.lower() == "list":
+				menus_agent_interaction.list_task(global_agent_uid)
 			else:
 				agent_name = menus_agent_interaction.menu_current_agent_name(global_agent_uid)
 				agent_commands_interaction = config["agent"]["details"][agent_name]["commands"]

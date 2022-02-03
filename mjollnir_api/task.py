@@ -106,6 +106,32 @@ def get_task_result(task_uid):
 
     return encrypt(r)
 
+# list tasks for agent_uid
+@task.route(config["hidden_route"] + config["endpoints"]["task"], methods=['GET'])
+@login_required
+def list_agent_tasks():
+    agent_uid = request.args.get("agent_uid")
+    tasks = Task.query.filter_by(agent_uid=agent_uid).all()
+
+    r = {}
+
+    for task in tasks:
+        tmp = {}
+        tmp["task_uid"] = task.task_uid
+        tmp["task_created_at"] = task.task_created_at
+        tmp["task_submited"] = task.task_submited
+        tmp["task_completed"] = task.task_completed
+        tmp["cmd_request"] = task.cmd_request
+        if len(task.cmd_arg) > 80:
+            tmp["cmd_arg"] = task.cmd_arg[0:80] + " ..."
+        else:
+            tmp["cmd_arg"] = task.cmd_arg
+        
+        r[task.task_uid] = tmp
+
+    r = json.dumps(r)
+
+    return encrypt(r)
 
 
 # delete all tasks for an  agent
