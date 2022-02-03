@@ -57,7 +57,7 @@ class OnRegisteringTask(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     task_uid = db.Column(db.String(100))
     task_created_at = db.Column(db.String(100))
+    agent_name = db.Column(db.String(100))
     cmd_request = db.Column(db.String(100))
     cmd_arg = db.Column(db.String(100000))
-
     

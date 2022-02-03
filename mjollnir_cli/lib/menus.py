@@ -383,7 +383,35 @@ class Listener(object):
 		tt.print(values, header=headers)
 		return True
 
+class OnRegisteringTask(object):
+	def __init__(self, config, session):
+		self.config = config
+		self.s = session
+		self.misc = misc.Misc()
+		self.task = task.OnRegisteringTask(self.config, self.s, self.misc)
 
+	def registering_task_list(self, agent_name):
+		return True
+
+	def registering_task_create(self, agent_name, argInput):
+		cmd_request = argInput[0]
+		cmd_arg = ""
+		for c in argInput[1:]:
+			cmd_arg += c + " "
+		
+		cmd_arg = cmd_arg[:-1] # remove the last " "
+
+		task_uid = self.task.create_registering_task(agent_name, cmd_request, cmd_arg)
+		return True
+
+class GroupTask(object):
+	def __init__(self, config, session):
+		self.config = config
+		self.s = session
+		self.misc = misc.Misc()
+	
+	def group_task_list(self, group_name):
+		return True
 
 class Mission(object):
 	def __init__(self, config, session):

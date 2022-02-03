@@ -402,6 +402,10 @@ def main():
 				global_agent_name = input("agent name: ")
 			elif len(argInput) >= 3 and argInput[1] == "-c":
 				global_agent_name = argInput[2]	
+			else:
+				mjollnir_menus["main_menu"] = True
+				mjollnir_menus["registering_task_menu"] = False
+				global_agent_name = ""
 
 		elif cmd.lower() == "g-task":
 			mjollnir_menus["main_menu"] = False
@@ -489,21 +493,40 @@ def main():
 				agent_name = menus_agent_interaction.menu_current_agent_name(global_agent_uid)
 				agent_commands_interaction = config["agent"]["details"][agent_name]["commands"]
 				found = False
+				# check if command exist for that agent name
 				for k in agent_commands_interaction.keys():
 					if cmd.upper() == agent_commands_interaction[k]["name"]:
 						found = True
-						menus_agent_interaction.submit_task(global_agent_uid, argInput)
 						break
 				
 				if not found and cmd != "":
 					print("[-] That command does not exist (check your config file): " + cmd.upper())
+				else:
+					menus_agent_interaction.submit_task(global_agent_uid, argInput)
 
 		# ON REGISTERING TASK MENU
 		elif mjollnir_menus["registering_task_menu"] == True:
-			print("Create a registering task for the agent: " + global_agent_name)
+			if cmd.lower() == "list":
+				menus_registering_task.registering_task_list(global_agent_name)
+			else:
+				all_agent_commands = config["agent"]["details"][global_agent_name]["commands"]
+				found = False
+				# check if command exist for that agent name
+				for k in all_agent_commands.keys():
+					if cmd.upper() == all_agent_commands[k]["name"]:
+						found = True
+						break
+
+				if not found and cmd != "":
+					print("[-] That command does not exist (check your config file): " + cmd.upper())
+				else:
+					menus_registering_task.registering_task_create(global_agent_name, argInput)
+
 
 		# GROUP TASK MENU
 		elif mjollnir_menus["group_task_menu"] == True:
+			if cmd.lower() == "list":
+				menus_group_task.group_task_list(global_group_name)
 			print("Create a task for the group: " + global_group_name)
 
 		else:
@@ -545,6 +568,8 @@ if __name__ == '__main__':
 	menus_agent = menus.Agent(config, s)
 	menus_agent_interaction = menus.AgentInteraction(config, s)
 	menus_listener = menus.Listener(config, s)
+	menus_registering_task = menus.OnRegisteringTask(config, s)
+	menus_group_task = menus.GroupTask(config, s)
 
 	global session
 	session = PromptSession()

