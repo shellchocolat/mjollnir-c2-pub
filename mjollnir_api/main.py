@@ -2,7 +2,7 @@
 
 from flask import Blueprint, render_template, request, send_from_directory
 from flask_login import login_required
-from . import db, config, decrypt, encrypt
+from . import db, config, decrypt, encrypt, current_dir
 
 main = Blueprint('main', __name__)
 
@@ -27,7 +27,7 @@ def admin():
 def public_download(filename):
     print("[*] file requested: " + filename)
     try:
-        return send_from_directory(directory=config["fileserver"]["public_download"], filename=filename, as_attachment=True)
+        return send_from_directory(directory=current_dir + config["fileserver"]["public_download"], filename=filename, as_attachment=True)
     except Exception as e:
         print(str(e))
         return encrypt("[-] That file does not exist: " + filename)
@@ -38,7 +38,7 @@ def public_download(filename):
 def private_download(filename):
     print("[*] file requested: " + filename)
     try:
-        return send_from_directory(directory=config["fileserver"]["private_download"], filename=filename, as_attachment=True)
+        return send_from_directory(directory=current_dir + config["fileserver"]["private_download"], filename=filename, as_attachment=True)
     except Exception as e:
         print(str(e))
         return encrypt("[-] That file does not exist: " + filename)

@@ -232,6 +232,10 @@ class AgentInteraction(object):
 		return True
 
 	def submit_task(self, agent_uid, argInput):
+		L = len(argInput)
+		if L == 0:
+			return False
+
 		cmd_request = argInput[0].upper()
 		cmd_arg = ""
 		for c in argInput[1:]:

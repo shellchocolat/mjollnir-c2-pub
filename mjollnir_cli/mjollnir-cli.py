@@ -515,6 +515,7 @@ def main():
 					print("[-] That command does not exist (check your config file): " + cmd.upper())
 				else:
 					menus_agent_interaction.submit_task(global_agent_uid, argInput)
+					argInput = []
 
 		# ON REGISTERING TASK MENU
 		elif mjollnir_menus["registering_task_menu"] == True:
@@ -549,6 +550,9 @@ def main():
 				# can't determine easily if CMD existe because it could have different
 				# agent within the same group
 					menus_group_task.group_task_create(global_group_name, argInput)
+
+		# reset argInput
+		argInput = []
 		
 
 def printBanner():
