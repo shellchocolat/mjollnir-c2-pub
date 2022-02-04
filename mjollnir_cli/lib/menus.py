@@ -476,7 +476,7 @@ class GroupTask(object):
 			cmd_arg += c + " "
 		cmd_arg = cmd_arg[:-1] # remove the last " "
 
-		task_uid = self.task.create_group_task(group_name, cmd_request, cmd_arg)
+		task_uid = self.task.create_group_task(agent_name, cmd_request, cmd_arg)
 		return True
 
 	def group_task_delete(self, argInput):

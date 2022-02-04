@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
 import json
-from . import db, config, decrypt, encrypt
+from . import db, config, decrypt, encrypt, current_dir
 from .models import Mission
 import uuid
 

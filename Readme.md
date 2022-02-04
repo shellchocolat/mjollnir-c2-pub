@@ -7,7 +7,7 @@ $ python3
 >>> db.create_all(app=create_app())
 ```
 
-The modify the config.json file to suit your needs.
+Then modify the config.json file to suit your needs.
 
 Then start the api:
 

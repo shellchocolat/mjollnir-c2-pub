@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
 import json
-from . import db, config, decrypt, encrypt
+from . import db, config, decrypt, encrypt, current_dir
 from .models import Listener
 import uuid
 import subprocess
@@ -31,7 +31,7 @@ def create_listener():
     
     listener_uid = str(uuid.uuid4())
     listener_name = d["listener_name"]
-    listener_path = config["listener"]["details"][listener_name]["path"]
+    listener_path = current_dir + config["listener"]["details"][listener_name]["path"]
     params = config["listener"]["details"][listener_name]["parameters"]
     listener_bind_address = d["IP"]
     listener_bind_port = d["PORT"]

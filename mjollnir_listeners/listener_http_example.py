@@ -173,7 +173,7 @@ class S(BaseHTTPRequestHandler):
         
                 
 def is_agent_exist(agent_uid):
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
     print(agent_uid)
     cur.execute("SELECT * FROM agent WHERE agent_uid='%s'" %agent_uid)
@@ -186,7 +186,7 @@ def is_agent_exist(agent_uid):
         return True
 
 def fetch_agent_uid(agent_uid):
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
     cur.execute("SELECT * FROM agent WHERE agent_uid=? ORDER BY agent_created_at DESC", (agent_uid,))
     rows = cur.fetchall()
@@ -201,7 +201,7 @@ def create_update_agent(body):
 
     r = fetch_agent_uid(body["agent_uid"])
 
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
     if len(r)==0: # this agent does not exist, so add it to the db
         created_at = today.strftime("%d/%m/%Y")
@@ -219,7 +219,7 @@ def create_update_agent(body):
 
 def update_last_check(agent_uid):
     today = datetime.now()
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
     last_check = today.strftime("%d/%m/%Y - %H:%M")
     cur.execute("UPDATE agent SET agent_last_check=? WHERE agent_uid=?", (last_check, agent_uid))
@@ -228,7 +228,7 @@ def update_last_check(agent_uid):
     return True
 
 def fetch_on_registering_task(agent_name):
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
 
     cur.execute("SELECT * FROM on_registering_task WHERE agent_name=? ORDER BY task_created_at ASC", (agent_name,))
@@ -240,7 +240,7 @@ def fetch_on_registering_task(agent_name):
 
 def create_task_to_agent(agent_uid, task):
     #print(task)
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
 
     today = datetime.now()
@@ -259,7 +259,7 @@ def create_task_to_agent(agent_uid, task):
     return True
 
 def fetch_task(agent_uid):
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
     cur.execute("SELECT * FROM task WHERE agent_uid='%s' AND task_submited=False ORDER BY task_created_at ASC" %agent_uid)
     rows = cur.fetchall()
@@ -269,7 +269,7 @@ def fetch_task(agent_uid):
     return rows
     
 def update_submited_task(task_uid):
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
     cur.execute("UPDATE task SET task_submited=True WHERE task_uid='%s'" %task_uid)
     rows = cur.fetchall()
@@ -280,7 +280,7 @@ def update_submited_task(task_uid):
     return rows
 
 def update_completed_task(task_uid, cmd_result):
-    con = sqlite3.connect(config["database_path"])
+    con = sqlite3.connect(current_dir + config["database_path"])
     cur = con.cursor()
     cur.execute("UPDATE task SET (task_completed, cmd_result)=(True, ?) WHERE task_uid=?", (cmd_result, task_uid))
     rows = cur.fetchall()
@@ -303,8 +303,8 @@ def run(server_class=HTTPServer, handler_class=S, ip="127.0.0.1", port=8080):
 if __name__ == '__main__':
     # ./listener <ip> <port>
 
-    global config
-    #print(os.getcwd())
+    global config, current_dir
+    current_dir = os.getcwd()
     with open("./config.json", "r") as fp:
         config = fp.read()
     config = json.loads(config)

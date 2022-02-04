@@ -8,16 +8,16 @@ from base64 import b64decode, b64encode
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 import uuid
+import os
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
 
 #import os
-#print(os.getcwd())
+current_dir = os.getcwd()
 with open("./config.json", "r") as fp:
     config = fp.read()
 config = json.loads(config)
-#print(config)
 
 def create_app():
     app = Flask(__name__, 

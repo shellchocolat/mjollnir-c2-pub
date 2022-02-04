@@ -566,8 +566,9 @@ def printBanner():
 if __name__ == '__main__':
 	printBanner()
 	print()
-
-	with open("../config.json", "r") as fp:
+	
+	current_dir = os.getcwd()
+	with open(current_dir + "/../config.json", "r") as fp:
 		config = fp.read()
 	config = json.loads(config)
 	#print(config)

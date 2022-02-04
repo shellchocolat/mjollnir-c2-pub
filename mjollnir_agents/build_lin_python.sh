@@ -25,8 +25,8 @@ sed -i "s/{{JITTER}}/$4/g" $P/a.tmp
 sed -i "s/{{FRUIT}}/$5/g" $P/a.tmp
 sed -i "s/{{AGENT_NAME}}/$9/g" $P/a.tmp
 
-cp $P/"a.tmp" $P_OUTPUT
+cp $P/"a.tmp" $P/../$P_OUTPUT
 
-chmod +x $P_OUTPUT
+chmod +x $P/../$P_OUTPUT
 
 rm $P/a.tmp

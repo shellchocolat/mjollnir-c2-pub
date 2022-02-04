@@ -1,5 +1,5 @@
 from .models import User
-from . import db, config, decrypt, encrypt
+from . import db, config, decrypt, encrypt, current_dir
 from flask_login import login_user, logout_user, login_required
 from flask import Blueprint, request
 import uuid

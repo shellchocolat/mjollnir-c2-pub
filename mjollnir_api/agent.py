@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
 import json
-from . import db, config, decrypt, encrypt
+from . import db, config, decrypt, encrypt, current_dir
 from .models import Agent
 import subprocess
 import shlex
@@ -52,9 +52,9 @@ def generate_agent():
     d = json.loads(d)
 
     agent_name = d["agent_name"]
-    agent_builder = config["agent"]["details"][agent_name]["builder"]
+    agent_builder = current_dir + config["agent"]["details"][agent_name]["builder"]
     params = config["agent"]["details"][agent_name]["parameters"]
-    source_code = config["agent"]["details"][agent_name]["stages"]["0"]["source_code"]
+    source_code = current_dir + config["agent"]["details"][agent_name]["stages"]["0"]["source_code"]
     c = agent_builder
     for p in params:
         c += " " + d[p]
