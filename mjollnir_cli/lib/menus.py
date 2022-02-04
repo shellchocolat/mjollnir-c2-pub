@@ -228,7 +228,10 @@ class AgentInteraction(object):
 			values.append(row)
 			row = []
 
-		tt.print(values, header=headers)
+		try:
+			tt.print(values, header=headers)
+		except:
+			pass
 		return True
 
 	def submit_task(self, agent_uid, argInput):
@@ -438,7 +441,10 @@ class OnRegisteringTask(object):
 			values.append(row)
 			row = []
 
-		tt.print(values, header=headers)
+		try:
+			tt.print(values, header=headers)
+		except:
+			pass
 		return True
 
 		return True
