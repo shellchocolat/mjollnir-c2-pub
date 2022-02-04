@@ -111,3 +111,28 @@ class OnRegisteringTask():
 		else:
 			print("[-] Cannot create the 'on registering task' for the agent name: " + agent_name)
 			return self.misc.decrypt(r.content)
+
+	def list_registering_tasks_for_agent(self, agent_name):
+		# GET mjollir_url/hidden_route/registering_task?agent_name=agent_name
+		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
+		endpoint = self.config["endpoints"]["registering_task"] + "?agent_name=" + agent_name
+
+		r = self.s.get(url+endpoint)
+		if r.status_code == 200:
+			#print(self.misc.decrypt(r.content))
+			return self.misc.decrypt(r.content)
+		else:
+			print("[-] Cannot list the 'on registering tasks' for the agent: " + agent_name)
+			return self.misc.decrypt(r.content)
+
+	def delete_registering_task(self, tasks_uid):
+		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
+		endpoint = self.config["endpoints"]["registering_task"]
+		for task_uid in tasks_uid:
+			data = self.misc.encrypt(task_uid)
+			r = self.s.delete(url+endpoint + "?task_uid=" + task_uid, data=data)
+			if r.status_code == 200:
+				print(self.misc.decrypt(r.content))
+			else:
+				print("[-] Cannot delete the 'on registering task': " + task_uid)
+		return True

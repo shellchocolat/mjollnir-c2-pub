@@ -416,6 +416,27 @@ class OnRegisteringTask(object):
 		self.task = task.OnRegisteringTask(self.config, self.s, self.misc)
 
 	def registering_task_list(self, agent_name):
+		tasks = self.task.list_registering_tasks_for_agent(agent_name)
+		tasks = json.loads(tasks)
+		headers = ["task uid", "created at", "cmd"]
+		values = []
+		row = []
+		for k in tasks.keys():
+			task_uid = tasks[k]["task_uid"]
+			task_created_at = tasks[k]["task_created_at"]
+			cmd = tasks[k]["cmd_request"]
+			cmd += " " + tasks[k]["cmd_arg"]
+
+			row.append(task_uid)
+			row.append(task_created_at)
+			row.append(cmd)
+			
+			values.append(row)
+			row = []
+
+		tt.print(values, header=headers)
+		return True
+
 		return True
 
 	def registering_task_create(self, agent_name, argInput):
@@ -427,6 +448,15 @@ class OnRegisteringTask(object):
 		cmd_arg = cmd_arg[:-1] # remove the last " "
 
 		task_uid = self.task.create_registering_task(agent_name, cmd_request, cmd_arg)
+		return True
+
+	def registering_task_delete(self, argInput):
+		L = len(argInput)
+		if L >= 2:
+			task_uids = []
+			for i in range(1,L):
+				task_uids.append(argInput[i])
+			self.task.delete_registering_task(task_uids)
 		return True
 
 class GroupTask(object):

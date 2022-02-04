@@ -520,6 +520,8 @@ def main():
 		elif mjollnir_menus["registering_task_menu"] == True:
 			if cmd.lower() == "list":
 				menus_registering_task.registering_task_list(global_agent_name)
+			elif cmd.lower() == "delete":
+				menus_registering_task.registering_task_delete(argInput)
 			else:
 				all_agent_commands = config["agent"]["details"][global_agent_name]["commands"]
 				found = False
