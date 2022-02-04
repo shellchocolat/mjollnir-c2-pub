@@ -464,8 +464,22 @@ class GroupTask(object):
 		self.config = config
 		self.s = session
 		self.misc = misc.Misc()
+		self.task = task.Task(self.config, self.s, self.misc)
 	
 	def group_task_list(self, group_name):
+		return True
+
+	def group_task_create(self, group_name, argInput):
+		cmd_request = argInput[0]
+		cmd_arg = ""
+		for c in argInput[1:]:
+			cmd_arg += c + " "
+		cmd_arg = cmd_arg[:-1] # remove the last " "
+
+		task_uid = self.task.create_group_task(group_name, cmd_request, cmd_arg)
+		return True
+
+	def group_task_delete(self, argInput):
 		return True
 
 class Mission(object):

@@ -29,6 +29,36 @@ class Task():
 			print("[-] Cannot create the task for the agent: " + agent_uid)
 			return self.misc.decrypt(r.content)
 
+	def create_group_task(self, group_name, cmd_request, cmd_arg):
+		# find all agents uids that has group_name
+
+		# GET mjollnir/hidden_route/agents
+		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
+		endpoint = self.config["endpoints"]["agents"]
+		r = self.s.get(url+endpoint)
+		agent_uids = []
+		if r.status_code == 200:
+			try:
+				j = json.loads(self.misc.decrypt(r.content))
+				#print(j)
+				for k in j.keys():
+					#print(j[k]) # [uid, name, group, type, os, created at, last check, ip, hostname, usermane, integrity level, version]
+					if j[k][2] == group_name:
+						agent_uids.append(j[k][0])
+			except Exception as e:
+				print(str(e))
+				print(self.misc.decrypt(r.content))	
+		else:
+			print("[-] Cannot list the agents")
+			return False
+
+		# create the task for each agent_uid
+		for agent_uid in agent_uids:
+			task_uid = self.create_task(agent_uid, cmd_request, cmd_arg)
+			print("[+] Task created: " + task_uid)
+
+		return True
+
 	def list_agent_task(self, agent_uid):
 		# GET mjollir_url/hidden_route/task?agent_uid=agent_uid
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]

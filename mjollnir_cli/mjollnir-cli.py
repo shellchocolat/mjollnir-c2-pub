@@ -32,12 +32,6 @@ import getpass
 
 print = print_formatted_text
 
-global global_agent_name, global_agent_uid, global_listener_name, global_group_name
-global_agent_name = ""
-global_agent_uid = ""
-global_listener_name = ""
-global_group_name = ""
-
 global WIDE_SPACE, SPACE
 WIDE_SPACE = ('', '     ')
 SPACE = ('',' ')
@@ -98,13 +92,13 @@ main_family_colors = {
 }
 
 main_meta = {
-	'mission': HTML('Create/Edit/Delete/Select a mission and List all missions (-c, -e, -d, -s, -l)\n Example: <i>mission -c evilcorp</i>'),
-	'listener': HTML('Create/Delete a listener and List all listeners (-c, -d, -l)\n Example: <i>listener -c http 192.168.0.128 9999</i>'),
-	'agent': HTML('Create/Delete/Interact/Use an agent and List all agents (-c, -d, -i, -u, -l)\n Example: <i>agent -l</i>'),
-	'task': HTML('Result for a task (-r)\n Example: <i>task -r task_uid</i>'),
-	'r-task': HTML('Create a "on registering task" for an agent_name (-c) \n Example: <i>r-task -c agent_name</i>'),
-	'g-task': HTML('Create a "group task" for an agent_group (-c) \n Example: <i>g-task -c agent_group</i>'),
-	'login': HTML('Login to the Mjollnir-api\n Example: <i>login username</i>'),
+	'mission': HTML('Create/Edit/Delete/Select a mission and List all missions (-c, -e, -d, -s, -l) Example: <i>mission -c evilcorp</i>'),
+	'listener': HTML('Use a listener and List all actives listeners (-u, -l) Example: <i>listener -u listener_name</i> / <i>listener -l</i>'),
+	'agent': HTML('Use/Interact with an agent and List all actives agents (-u, -i, -l) Example: <i>agent -u agent_name</i> / <i>agent -l</i>'),
+	'task': HTML('Result for a task (-r) Example: <i>task -r task_uid</i>'),
+	'r-task': HTML('Create a "on registering task" for an agent_name (-c) Example: <i>r-task agent_name</i>'),
+	'g-task': HTML('Create a "group task" for an agent_group (-c) Example: <i>g-task agent_group</i>'),
+	'login': HTML('Login to the Mjollnir-api Example: <i>login username</i>'),
 	'first_user': HTML('Used to register the first user (can only be used once)'),
 	#'list-payloads': HTML('Example: <i>list-payloads</i> / <i>:lspld x86</i> / <i>:lspld windows</i>'),
 	#'list-packers': HTML('Example: <i>list-packers</i> / <i>:lspkr x86</i> / <i>:lspkr windows</i>'),
@@ -172,7 +166,7 @@ agent_interaction_family_colors = {
 agent_interaction_meta = {
 	'back': HTML('Return to the previous menu.'),
 	'info': HTML('Display some nice info about the agent'),
-	'group': HTML('Edit agent group.\n Example: <i>group new_group</i>'),
+	'group': HTML('Edit agent group. Example: <i>group new_group</i>'),
 	# ...
 }
 
@@ -204,7 +198,7 @@ listener_meta = {
 	'set': HTML('Example: <i>set ip 127.0.0.1</i>'),
 	'back': HTML('Return to the previous menu.'),
 	'info': HTML('Display some infos about the selected agent'),
-	'list': HTML('List all availables agents'),
+	'list': HTML('List all availables listeners'),
 	# ...
 }
 
@@ -213,7 +207,7 @@ listener_meta = {
 ##################################################################
 
 registering_task_commands =[
-	'set', 'start', 'info', 'back', 'list'
+	'list', 'delete', 'back'
 ]
 
 registering_task_commands += main_commands
@@ -232,11 +226,9 @@ registering_task_family_colors = {
 }
 
 registering_task_meta = {
-	'start': HTML('Start the listener'),
-	'set': HTML('Example: <i>set ip 127.0.0.1</i>'),
 	'back': HTML('Return to the previous menu.'),
-	'info': HTML('Display some infos about the selected agent'),
-	'list': HTML('List all availables agents'),
+	'delete': HTML('Delete a task. Example: <i>delete task_uid</i>'),
+	'list': HTML('List all availables on registering task'),
 	# ...
 }
 
@@ -245,7 +237,7 @@ registering_task_meta = {
 ##################################################################
 
 group_task_commands =[
-	'set', 'start', 'info', 'back', 'list'
+	'list', 'delete', 'back'
 ]
 
 group_task_commands += main_commands
@@ -264,10 +256,8 @@ group_task_family_colors = {
 }
 
 group_task_meta = {
-	'start': HTML('Start the listener'),
-	'set': HTML('Example: <i>set ip 127.0.0.1</i>'),
 	'back': HTML('Return to the previous menu.'),
-	'info': HTML('Display some infos about the selected agent'),
+	'delete': HTML('Delete a task. Example: <i>delete task_uid</i>'),
 	'list': HTML('List all availables agents'),
 	# ...
 }
@@ -373,12 +363,12 @@ def main():
 			if len(argInput) == 1:
 				mjollnir_menus["agent_menu"] = True
 				mjollnir_menus["agent_interaction_menu"] = False
-				value_toolbar = "<b><style bg='ansired'> AGENT</style></b>"
+				value_toolbar = "<b><style bg='ansired'> AGENT: %s</style></b>"%("")
 			elif len(argInput) >= 3 and argInput[1] == "-i":
 				mjollnir_menus["agent_menu"] = False
 				mjollnir_menus["agent_interaction_menu"] = True
 				global_agent_uid = argInput[2]
-				value_toolbar = "<b><style bg='ansired'> " + argInput[2] + "</style></b>"
+				value_toolbar = "<b><style bg='ansired'> AGENT INTERACTION: %s</style></b>"%global_agent_uid
 			elif len(argInput) >= 3 and argInput[1] == "-u":
 				mjollnir_menus["agent_menu"] = True
 				mjollnir_menus["agent_interaction_menu"] = False
@@ -387,6 +377,7 @@ def main():
 					global_agent_name = agent_name
 				else:
 					global_agent_name = ""
+				value_toolbar = "<b><style bg='ansired'> AGENT: %s</style></b>"%global_agent_name
 			else:
 				mjollnir_menus["agent_menu"] = False
 				mjollnir_menus["agent_interaction_menu"] = True
@@ -406,11 +397,12 @@ def main():
 			mjollnir_menus["listener_menu"] = False
 			mjollnir_menus["registering_task_menu"] = True
 			mjollnir_menus["group_task_menu"] = False
-			value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK</style></b>"
 			if len(argInput) == 1:
 				global_agent_name = input("agent name: ")
-			elif len(argInput) >= 3 and argInput[1] == "-c":
-				global_agent_name = argInput[2]	
+				value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK: %s</style></b>"%global_agent_name
+			elif len(argInput) >= 2:
+				global_agent_name = argInput[1]
+				value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK: %s</style></b>"%global_agent_name
 			else:
 				mjollnir_menus["main_menu"] = True
 				mjollnir_menus["registering_task_menu"] = False
@@ -423,11 +415,16 @@ def main():
 			mjollnir_menus["listener_menu"] = False
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = True
-			value_toolbar = "<b><style bg='ansired'> GROUP TASK</style></b>"
 			if len(argInput) == 1:
 				global_group_name = input("group name: ")
-			elif len(argInput) >= 3 and argInput[1] == "-c":
-				global_group_name = argInput[2]	
+				value_toolbar = "<b><style bg='ansired'> GROUP TASK: %s</style></b>"%global_group_name
+			elif len(argInput) >= 2:
+				global_group_name = argInput[1]
+				value_toolbar = "<b><style bg='ansired'> GROUP TASK: %s</style></b>"%global_group_name
+			else:
+				mjollnir_menus["main_menu"] = True
+				mjollnir_menus["group_task_menu"] = False
+				global_agent_name = ""
 
 		elif cmd.lower() == "mission":
 			if len(argInput) == 1:
@@ -441,9 +438,9 @@ def main():
 			mjollnir_menus["agent_interaction_menu"] = False
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = False
-			value_toolbar = "<b><style bg='ansired'> LISTENER</style></b>"
 			if len(argInput) == 1:
 				mjollnir_menus["listener_menu"] = True
+				value_toolbar = "<b><style bg='ansired'> LISTENER: %s</style></b>"%("")
 			elif len(argInput) >= 3 and argInput[1] == "-u":
 				mjollnir_menus["listener_menu"] = True
 				listener_name = argInput[2]
@@ -451,6 +448,7 @@ def main():
 					global_listener_name = listener_name
 				else:
 					global_listener_name = ""
+				value_toolbar = "<b><style bg='ansired'> LISTENER: %s</style></b>"%global_listener_name
 			else:
 				mjollnir_menus["listener_menu"] = True
 				commander.manage_listener(argInput)  
@@ -472,6 +470,7 @@ def main():
 					global_listener_name = argInput[1]
 				else:
 					global_listener_name = input("listener name: ")
+				value_toolbar = "<b><style bg='ansired'> LISTENER: %s</style></b>"%global_listener_name
 				menus_listener.menu_listener_use(global_listener_name)
 
 		# AGENT MENU
@@ -491,6 +490,7 @@ def main():
 					global_agent_name = argInput[1]
 				else:
 					global_agent_name = input("agent name: ")
+				value_toolbar = "<b><style bg='ansired'> AGENT: %s</style></b>"%global_agent_name
 				menus_agent.menu_agent_use(global_agent_name)
 
 		# AGENT INTERACTION MENU
@@ -540,14 +540,15 @@ def main():
 		# GROUP TASK MENU
 		elif mjollnir_menus["group_task_menu"] == True:
 			if cmd.lower() == "list":
-				menus_group_task.group_task_list(global_group_name)
-			print("Create a task for the group: " + global_group_name)
-
-		else:
-			if cmd == "":
 				pass
+				#menus_group_task.group_task_list(global_group_name)
+			elif cmd.lower() == "delete":
+				pass
+				#menus_group_task.registering_task_delete(argInput)
 			else:
-				print("[-] That command does no exist: " + cmd)
+				# can't determine easily if CMD existe because it could have different
+				# agent within the same group
+					menus_group_task.group_task_create(global_group_name, argInput)
 		
 
 def printBanner():
@@ -584,6 +585,12 @@ if __name__ == '__main__':
 	menus_listener = menus.Listener(config, s)
 	menus_registering_task = menus.OnRegisteringTask(config, s)
 	menus_group_task = menus.GroupTask(config, s)
+
+	global global_agent_name, global_agent_uid, global_listener_name, global_group_name
+	global_agent_name = ""
+	global_agent_uid = ""
+	global_listener_name = ""
+	global_group_name = ""
 
 	global session
 	session = PromptSession()
