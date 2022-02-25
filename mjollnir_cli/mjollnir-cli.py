@@ -74,7 +74,7 @@ message = [
 # main menu
 ##################################################################
 main_commands = [
-	'mission', 'listener', 'agent', 'task', 'r-task', 'g-task', 'launcher', 'login', 'logout', 'first_user', 'help', 'exit',
+	'mission', 'listener', 'agent', 'task', 'r-task', 'g-task', 'launcher', 'login', 'logout', 'first_user', 'download', 'help', 'exit',
 	# ...
 ]
 
@@ -100,6 +100,7 @@ main_meta = {
 	'g-task': HTML('Create a "group task" for an agent_group (-c) Example: <i>g-task agent_group</i>'),
 	'login': HTML('Login to the Mjollnir-api Example: <i>login username</i>'),
 	'first_user': HTML('Used to register the first user (can only be used once)'),
+	'download': HTML('Download an agentonce created Example: <i>download http://127.0.0.1:5000/public/agent.exe</i>'),
 	#'list-payloads': HTML('Example: <i>list-payloads</i> / <i>:lspld x86</i> / <i>:lspld windows</i>'),
 	#'list-packers': HTML('Example: <i>list-packers</i> / <i>:lspkr x86</i> / <i>:lspkr windows</i>'),
 	#'list-encoders': HTML('Example: <i>list-encoders</i> / <i>:lsenc x86</i> / <i>:lsenc windows</i>'),
@@ -349,6 +350,8 @@ def main():
 			commander.manage_login(argInput)
 		elif cmd.lower() == "logout":
 			commander.manage_logout()
+		elif cmd.lower() == "download":
+			commander.manage_download(argInput)
 		elif cmd.lower() == "user":
 			if len(argInput) == 1:
 				# go to user menu

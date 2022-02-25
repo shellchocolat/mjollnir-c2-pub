@@ -47,6 +47,16 @@ class Commander(object):
 		if action == "-l": # list all users
 			if L >= 2:
 				self.user.list_users()
+
+	def manage_download(self, argInput):
+		L = len(argInput)
+		if L >= 3:
+			source = argInput[1]
+			destination = argInput[2]
+			self.agent.download_agent(source, destination)
+		else:
+			print("[-] Need a source and a destination")
+			print("[*] download http://127.0.0.1/public/agent.exe /tmp/agent.exe")
 				
 	def manage_agent(self, argInput):
 		L = len(argInput)

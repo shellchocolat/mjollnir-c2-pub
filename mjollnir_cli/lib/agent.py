@@ -27,6 +27,23 @@ class Agent():
 			print("[-] Cannot generate the agent")
 			return False
 
+	def download_agent(self, source, destination):
+		r = self.s.get(source)
+		if r.status_code == 200:
+			try:
+				open(destination, "wb").write(r.content)
+				print("[+] Download of " + source + " into " + destination + " : OK")
+				return True
+			except Excption as e:
+				print(str(e))
+				print("[-] Cannot download " + source)
+				return False
+		else:
+			print("[-] Cannot download " + source)
+			return False
+
+		
+
 	def list_agents(self):
 		# GET mjollnir/hidden_route/agents
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
