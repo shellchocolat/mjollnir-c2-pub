@@ -326,10 +326,20 @@ def main():
 		
 		# COMMON COMMANDS
 		if cmd.lower() == "help" or cmd.lower() == ':h':
-			if len(argInput) == 1: # there is just cmd without any command
-				helper.helpMenu('')
-			else:
-				helper.helpMenu(argInput[1])
+			if len(argInput) >= 1: # there is just cmd without any command
+				if mjollnir_menus["agent_menu"] == True:  
+					helper.help_agent_menu()
+				elif mjollnir_menus["registering_task_menu"] == True:
+					helper.help_registering_task_menu()
+				elif mjollnir_menus["agent_interaction_menu"] == True:
+					helper.help_agent_interaction_menu()
+				elif mjollnir_menus["group_task_menu"] == True:
+					helper.help_group_task_menu()
+				elif mjollnir_menus["main_menu"] == True:
+					helper.help_main_menu()
+				else:
+					helper.help_main_menu()
+
 		elif cmd.lower() == 'back' or cmd.lower() == ":b":
 			mjollnir_menus["main_menu"] = True
 			mjollnir_menus["agent_menu"] = False
