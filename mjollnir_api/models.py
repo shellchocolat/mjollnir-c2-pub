@@ -42,6 +42,13 @@ class Agent(UserMixin, db.Model):
     agent_integrity_level = db.Column(db.String(100))
     agent_version = db.Column(db.String(100))
 
+class Shellcode(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    shellcode_uid = db.Column(db.String(100), unique=True)
+    shellcode_name = db.Column(db.String(100))
+    shellcode_type = db.Column(db.String(100))
+    shellcode_os = db.Column(db.String(100))
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     task_uid = db.Column(db.String(100))

@@ -74,7 +74,7 @@ message = [
 # main menu
 ##################################################################
 main_commands = [
-	'mission', 'listener', 'agent', 'task', 'r-task', 'g-task', 'launcher', 'login', 'logout', 'first_user', 'download', 'help', 'exit',
+	'mission', 'listener', 'shellcode', 'agent', 'task', 'r-task', 'g-task', 'launcher', 'login', 'logout', 'first_user', 'download', 'help', 'exit',
 	# ...
 ]
 
@@ -95,6 +95,7 @@ main_meta = {
 	'mission': HTML('Create/Edit/Delete/Select a mission and List all missions (-c, -e, -d, -s, -l) Example: <i>mission -c evilcorp</i>'),
 	'listener': HTML('Use a listener and List all actives listeners (-u, -l) Example: <i>listener -u listener_name</i> / <i>listener -l</i>'),
 	'agent': HTML('Use/Interact with an agent and List all actives agents (-u, -i, -l) Example: <i>agent -u agent_name</i> / <i>agent -l</i>'),
+	'shellcode': HTML('shellcode menu'),
 	'task': HTML('Result for a task (-r) Example: <i>task -r task_uid</i>'),
 	'r-task': HTML('Create a "on registering task" for an agent_name (-c) Example: <i>r-task agent_name</i>'),
 	'g-task': HTML('Create a "group task" for an agent_group (-c) Example: <i>g-task agent_group</i>'),
@@ -106,6 +107,38 @@ main_meta = {
 	#'list-encoders': HTML('Example: <i>list-encoders</i> / <i>:lsenc x86</i> / <i>:lsenc windows</i>'),
 	'exit': HTML('Exit Mjollnir'),
 	#'use': HTML('Example: <i>use shellcode</i> / <i>:u shellcode</i> and interact with it setting its <ansigreen>CMD/RHOST/LHOST/...</ansigreen>'),
+	# ...
+}
+
+##################################################################
+# shellcode menu
+##################################################################
+
+shellcode_commands =[
+	'set', 'generate', 'info', 'back', 'list'
+]
+
+shellcode_commands += main_commands
+
+shellcode_command_family = {
+	'help': ':h',
+	'exit': ':q',
+}
+
+shellcode_family_colors = {
+	'x86/x64': 'ansimagenta',
+	'x86': 'ansigreen',
+	'x64': 'ansired',
+	'x86-64': 'ansiyellow',
+	# ...
+}
+
+shellcode_meta = {
+	'generate': HTML('Generate the shellcode following the procedure inside the config file'),
+	'set': HTML('Example: <i>set ip 127.0.0.1</i>'),
+	'back': HTML('Return to the previous menu.'),
+	'info': HTML('Display some infos about the selected shellcode'),
+	'list': HTML('List all availables shellcodes'),
 	# ...
 }
 
@@ -279,9 +312,11 @@ def main():
 	mjollnir_menus = {
 		"main_menu": True, 
 		"agent_menu": False,
+		"listener_menu": False,
 		"agent_interaction_menu": False,
 		"registering_task_menu": False,
-		"group_task_menu": False
+		"group_task_menu": False,
+		"shellcode_menu": False,
 		}
 	value_toolbar = "<b><style bg='ansired'>/</style></b>"
 	while 1: 
@@ -293,6 +328,9 @@ def main():
 		#elif listener_menu:
 		#    comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
 		#    userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(shellcode), key_bindings=bindings)
+		elif mjollnir_menus["shellcode_menu"] == True:
+			comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
 		elif mjollnir_menus["agent_menu"] == True:
 			comp = viewer.AutoCompletion(agent_commands, agent_command_family, agent_family_colors, agent_meta)
 			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
@@ -335,6 +373,8 @@ def main():
 					helper.help_agent_interaction_menu()
 				elif mjollnir_menus["group_task_menu"] == True:
 					helper.help_group_task_menu()
+				elif mjollnir_menus["shellcode_menu"] == True:
+					helper.help_shellcode_menu()
 				elif mjollnir_menus["main_menu"] == True:
 					helper.help_main_menu()
 				else:
@@ -343,6 +383,7 @@ def main():
 		elif cmd.lower() == 'back' or cmd.lower() == ":b":
 			mjollnir_menus["main_menu"] = True
 			mjollnir_menus["agent_menu"] = False
+			mjollnir_menus["shellcode_menu"] = False
 			mjollnir_menus["agent_interaction_menu"] = False
 			mjollnir_menus["listener_menu"] = False
 			mjollnir_menus["registering_task_menu"] = False
@@ -351,6 +392,7 @@ def main():
 			global_agent_uid = ""
 			global_listener_name = ""
 			global_group_name = ""
+			global_shellcode_name = ""
 			value_toolbar = "<b><style bg='ansired'>/</style></b>"
 		elif cmd.lower() == "exit" or cmd.lower() == ':q':
 			sys.exit(0)
@@ -368,11 +410,25 @@ def main():
 				pass
 			else:
 				commander.manage_user(argInput)
+		elif cmd.lower() == "shellcode":
+			mjollnir_menus["main_menu"] = False
+			mjollnir_menus["agent_menu"] = False
+			mjollnir_menus["agent_interaction_menu"] = False
+			mjollnir_menus["registering_task_menu"] = False
+			mjollnir_menus["group_task_menu"] = False
+			mjollnir_menus["listener_menu"] = False
+			if len(argInput) == 1:
+				mjollnir_menus["shellcode_menu"] = True
+				value_toolbar = "<b><style bg='ansired'> SHELLCODE: %s</style></b>"%("")
+			else:
+				pass
+
 		elif cmd.lower() == "agent":
 			mjollnir_menus["main_menu"] = False
 			mjollnir_menus["listener_menu"] = False
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = False
+			mjollnir_menus["shellcode_menu"] = False
 			if len(argInput) == 1:
 				mjollnir_menus["agent_menu"] = True
 				mjollnir_menus["agent_interaction_menu"] = False
@@ -410,6 +466,7 @@ def main():
 			mjollnir_menus["listener_menu"] = False
 			mjollnir_menus["registering_task_menu"] = True
 			mjollnir_menus["group_task_menu"] = False
+			mjollnir_menus["shellcode_menu"] = False
 			if len(argInput) == 1:
 				global_agent_name = input("agent name: ")
 				value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK: %s</style></b>"%global_agent_name
@@ -428,6 +485,7 @@ def main():
 			mjollnir_menus["listener_menu"] = False
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = True
+			mjollnir_menus["shellcode_menu"] = False
 			if len(argInput) == 1:
 				global_group_name = input("group name: ")
 				value_toolbar = "<b><style bg='ansired'> GROUP TASK: %s</style></b>"%global_group_name
@@ -451,6 +509,7 @@ def main():
 			mjollnir_menus["agent_interaction_menu"] = False
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = False
+			mjollnir_menus["shellcode_menu"] = False
 			if len(argInput) == 1:
 				mjollnir_menus["listener_menu"] = True
 				value_toolbar = "<b><style bg='ansired'> LISTENER: %s</style></b>"%("")
@@ -485,6 +544,26 @@ def main():
 					global_listener_name = input("listener name: ")
 				value_toolbar = "<b><style bg='ansired'> LISTENER: %s</style></b>"%global_listener_name
 				menus_listener.menu_listener_use(global_listener_name)
+
+		# SHELLCODE MENU
+		elif mjollnir_menus["shellcode_menu"] == True:
+			if cmd.lower() == "list":
+				menus_shellcode.menu_shellcode_list()
+			elif cmd.lower() == "generate":
+				menus_shellcode.menu_shellcode_generate(global_shellcode_name)
+			elif cmd.lower() == "info":
+				menus_shellcode.menu_shellcode_info(global_shellcode_name)
+			elif cmd.lower() == "set":
+				if len(argInput) >= 2:
+					param_value = (argInput[1], argInput[2])  # (CMD, calc.exe)
+					menus_shellcode.menu_shellcode_set(global_shellcode_name, param_value)
+			elif cmd.lower() == "use":
+				if len(argInput) >= 2:
+					global_shellcode_name = argInput[1]
+				else:
+					global_shellcode_name = input("shellcode name: ")
+				value_toolbar = "<b><style bg='ansired'> SHELLCODE: %s</style></b>"%global_shellcode_name
+				menus_shellcode.menu_shellcode_use(global_shellcode_name)
 
 		# AGENT MENU
 		elif mjollnir_menus["agent_menu"] == True:
@@ -564,6 +643,7 @@ def main():
 				# agent within the same group
 					menus_group_task.group_task_create(global_group_name, argInput)
 
+
 		# reset argInput
 		argInput = []
 		
@@ -603,12 +683,14 @@ if __name__ == '__main__':
 	menus_listener = menus.Listener(config, s)
 	menus_registering_task = menus.OnRegisteringTask(config, s)
 	menus_group_task = menus.GroupTask(config, s)
+	menus_shellcode = menus.Shellcode(config, s)
 
-	global global_agent_name, global_agent_uid, global_listener_name, global_group_name
+	global global_agent_name, global_agent_uid, global_listener_name, global_group_name, global_shellcode_name
 	global_agent_name = ""
 	global_agent_uid = ""
 	global_listener_name = ""
 	global_group_name = ""
+	global_shellcode_name = ""
 
 	global session
 	session = PromptSession()

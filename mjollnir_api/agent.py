@@ -45,7 +45,7 @@ def generate_agent():
         content = request.data
         d = decrypt(content)
     except Exception as e:
-        print("[-] Error in create_agent()")
+        print("[-] Error in generate_agent()")
         print(str(e))
         return encrypt("[-] Cannot decrypt the request")
 

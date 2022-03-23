@@ -3,6 +3,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_cors import CORS, cross_origin
 import json
 from base64 import b64decode, b64encode
 from Crypto.PublicKey import RSA
@@ -27,6 +28,8 @@ def create_app():
 
     app.config['SECRET_KEY'] = 'ddLWGND4om3j4K3i4op1'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mjollnir-c2.sqlite'
+    cors = CORS(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
 
     db.init_app(app)
 
@@ -54,6 +57,9 @@ def create_app():
 
     from .agent import agent as agent_blueprint
     app.register_blueprint(agent_blueprint)
+
+    from .shellcode import shellcode as shellcode_blueprint
+    app.register_blueprint(shellcode_blueprint)
 
     from .task import task as task_blueprint
     app.register_blueprint(task_blueprint)

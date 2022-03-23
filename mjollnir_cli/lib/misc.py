@@ -18,3 +18,9 @@ class Misc():
 		except:
 			r = plain
 		return r
+
+	def mission_selected(mission_name):
+		if mission_name != "":
+			return True
+		else:
+			return False

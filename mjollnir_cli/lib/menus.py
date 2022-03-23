@@ -13,6 +13,7 @@ import agent
 import user
 import mission
 import listener
+import shellcode
 import task
 import misc
 
@@ -270,6 +271,146 @@ class AgentInteraction(object):
 		
 		return True
 
+class Shellcode(object):
+	def __init__(self, config, session):
+		self.config = config
+		self.s = session
+		self.misc = misc.Misc()
+		self.shellcode_parameters = {}
+		self.shellcode = shellcode.Shellcode(self.config, self.s, self.misc)
+
+	def menu_shellcode_info(self, shellcode_name):
+		try:
+			shellcodes = self.config["shellcode"]["details"][shellcode_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This shellcode does not exist: " + shellcode_name)
+			return False
+
+		parameters = shellcodes["parameters"]
+		parameters_info = shellcodes["parameters_info"]
+		headers = ["PARAMETERS", "VALUES", "INFOS"]
+		#headers = parameters
+		values = []
+		row = []
+		#print(self.shellcode_parameters)
+		#print(parameters_info)
+		for k in self.shellcode_parameters.keys():
+			row.append(k)
+			row.append(self.shellcode_parameters[k])
+
+			if k in parameters_info.keys():
+				row.append(parameters_info[k])
+			else:
+				row.append("")
+			
+			values.append(row)
+			row = []
+		
+		print("\n Name: " + shellcode_name)
+		print(" Info: " + shellcodes["info"])
+		print()
+		tt.print(values, header=headers)
+
+		return True
+
+	def menu_shellcode_set(self, shellcode_name, param_value):
+		# param_value = (param, value) = (CMD, calc.exe)
+		try:
+			shellcodes = self.config["shellcode"]["details"][shellcode_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This shellcode does not exist: " + shellcode_name)
+			return False
+
+		param = param_value[0]
+		if param.upper() in shellcodes["parameters"]:
+			self.shellcode_parameters[param.upper()] = param_value[1]
+		else:
+			return False
+
+		return True
+	
+	def menu_shellcode_list(self):
+		shellcodes = self.config["shellcode"]
+		shellcodes_details= shellcodes["details"]
+		shellcode_details_keys = shellcodes_details.keys()
+		headers = ["name", "info"]
+		values = []
+		row = []
+		for k in shellcode_details_keys:
+			row.append(k)
+			row.append(shellcodes_details[k]["info"])
+			values.append(row)
+			row = []
+		
+		tt.print(values, header=headers)
+		return True
+
+	def menu_shellcode_generate(self, shellcode_name):
+		try:
+			shellcodes = self.config["shellcode"]["details"][shellcode_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This shellcode does not exist: " + shellcode_name)
+			return False
+
+		for k in self.shellcode_parameters.keys():
+			if self.shellcode_parameters[k] == "":
+				print("[-] You must fill all the required parameters")
+				return False
+
+
+		param_to_send = {}
+		for k in self.shellcode_parameters.keys():
+			param_to_send[k] = self.shellcode_parameters[k]
+
+		param_to_send["shellcode_name"] = shellcode_name
+
+
+		self.shellcode.generate_shellcode(shellcode_name, param_to_send)
+
+		return True
+
+	def menu_shellcode_use(self, shellcode_name):
+		self.shellcode_parameters = {}
+		# retrieve all the shellcodes name to verify that the name entered by the user exists
+		try:
+			shellcodes = self.config["shellcode"]["details"][shellcode_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This shellcode does not exist: " + shellcode_name)
+			return False
+
+		# retrieve parameters needed for the selected shellcode
+		parameters = shellcodes["parameters"]
+		default_parameters = shellcodes["default_parameters"]
+		parameters_info = shellcodes["parameters_info"]
+		headers = ["PARAMETERS", "VALUES", "INFOS"]
+		values = []
+		row = []
+		for p in parameters:
+			row.append(p)
+			if p in default_parameters.keys():
+				row.append(default_parameters[p])
+				self.shellcode_parameters[p] = default_parameters[p]
+			else:
+				row.append("")
+				self.shellcode_parameters[p] = ""
+
+			if p in parameters_info.keys():
+				row.append(parameters_info[p])
+			else:
+				row.append("")
+			
+			values.append(row)
+			row = []
+
+		print("\n Name: " + shellcode_name)
+		print(" Info: " + shellcodes["info"])
+		print()
+		tt.print(values, header=headers)
+		return True
 
 class Listener(object):
 	def __init__(self, config, session):

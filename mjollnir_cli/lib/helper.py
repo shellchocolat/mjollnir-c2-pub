@@ -66,6 +66,10 @@ class Helper(object):
     def help_listener_menu(self):
         self.help_main_menu()
         return True
+    
+    def help_shellcode_menu(self):
+        self.help_main_menu()
+        return True
 
     def help_group_task_menu(self):
         self.help_main_menu()

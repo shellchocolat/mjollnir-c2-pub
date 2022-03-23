@@ -210,36 +210,3 @@ def delete_all_tasks():
     
 
     return encrypt("[+] All tasks deleted for the agent: " + agent_uid)
-
-"""
-# list all agents
-@agent.route(config["hidden_route"] + config["endpoints"]["agents"], methods=['GET'])
-@login_required
-def list_agents():
-    agents = Agent.query.all()
-    r = {}
-    tmp = []
-
-    for a in agents:
-        #print(a.id)
-        #print(a.agent_uid)
-        #print(a.agent_type)
-        tmp.append(a.agent_uid)
-        tmp.append(a.agent_name)
-        tmp.append(a.agent_group)
-        tmp.append(a.agent_type)
-        tmp.append(a.agent_os)
-        tmp.append(a.agent_created_at)
-        tmp.append(a.agent_last_check)
-        tmp.append(a.agent_ip_address)
-        tmp.append(a.agent_hostname)
-        tmp.append(a.agent_username)
-        tmp.append(a.agent_integrity_level)
-        tmp.append(a.agent_version)
-
-        r[a.agent_uid] = tmp
-        tmp = []
-
-    r = json.dumps(r) # to convert json to string
-    return encrypt(r)
-"""
