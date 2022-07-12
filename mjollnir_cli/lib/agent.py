@@ -62,6 +62,8 @@ class Agent():
 					row = j[k]
 					if row[10] == "high": # Integrity Level -> append a * in the begining of the list
 						row.insert(0,"*")
+					elif row[10] == "system": # Integrity Level -> append a ** in the begining of the list
+						row.insert(0,"**")
 					else:
 						row.insert(0,"")
 					values.append(row)

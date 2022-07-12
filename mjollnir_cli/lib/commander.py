@@ -55,8 +55,9 @@ class Commander(object):
 			destination = argInput[2]
 			self.agent.download_agent(source, destination)
 		else:
-			print("[-] Need a source and a destination")
+			print("[-] Need a <source> and a <destination>")
 			print("[*] download http://127.0.0.1/public/agent.exe /tmp/agent.exe")
+			print("[*] download http://127.0.0.1/private/blopblop/agent.exe /tmp/agent.exe")
 				
 	def manage_agent(self, argInput):
 		L = len(argInput)
@@ -107,7 +108,12 @@ class Commander(object):
 		elif action == "-s": # select a mission
 			if L >= 3:
 				mission_uid = argInput[2]
-				self.mission.select_mission(mission_uid)
+				r = self.mission.select_mission(mission_uid)
+				if r: # mission selected
+					#global_mission_name = argInput[2]
+					pass
+				else: # mission not selected
+					pass
 			else:
 				print("[-] Need a mission uid: mission -s <mission_uid>")
 

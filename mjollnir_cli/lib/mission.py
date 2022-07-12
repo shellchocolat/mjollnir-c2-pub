@@ -16,7 +16,7 @@ class Mission():
 			try:
 				j = json.loads(self.misc.decrypt(r.content))
 				#print(j)
-				headers = ["uid", "name"]
+				headers = ["uid", "name", "created at"]
 				values = []
 				for k in j.keys():
 					row = j[k]
@@ -64,6 +64,7 @@ class Mission():
 		r = self.s.get(url+endpoint, headers=headers)
 		if r.status_code == 200:
 			d = self.misc.decrypt(r.content)
+			print(r.content)
 			if d == "1": # mission exist
 				print("[+] Mission selected")
 			else: # mission does not exist

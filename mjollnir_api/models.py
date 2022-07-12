@@ -14,6 +14,7 @@ class Mission(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     mission_uid = db.Column(db.String(100), unique=True)
     mission_name = db.Column(db.String(100))
+    mission_created_at = db.Column(db.String(100))
     #user_uid = db.Column(db.String(100))
 
 class Listener(UserMixin, db.Model):

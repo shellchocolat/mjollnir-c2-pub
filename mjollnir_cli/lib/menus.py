@@ -203,6 +203,7 @@ class AgentInteraction(object):
 			agent_group = argInput[1]
 			r = self.agent.edit_agent_group(agent_uid, agent_group)
 		else:
+			r = "[-] Cannot change the agent group: " + agent_uid
 			print("[-] Cannot change the agent group: " + agent_uid)
 		return r
 

@@ -36,7 +36,7 @@ class Helper(object):
                           ex: agent                --> access the agent menu
                           ex: agent -l             --> list all active agents
                           ex: agent -i <agent_uid> --> interaction with the <agent_uid>
-                          ex: agent -d <agent_uid> --> delete the <agent_uid> from the database and all the associtated task
+                          ex: agent -d <agent_uid> --> delete the <agent_uid> from the database and all the associated task
 + download ------------ Downloads a freshly created agent
                           ex: download http://.../public/<agent_name> /tmp/<agent_name> --> download the <agent_name>
 + task ---------------- Read the result for a specific task

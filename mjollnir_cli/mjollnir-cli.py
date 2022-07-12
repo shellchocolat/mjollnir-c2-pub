@@ -65,6 +65,7 @@ style = Style.from_dict({
 	'etk': '#ff0066',
 	'end': '#ff0066'
 })
+
 message = [
 	('class:etk', 'Mjollnir'),
 	('class:end', ' > ')
@@ -179,7 +180,7 @@ agent_meta = {
 ##################################################################
 
 agent_interaction_commands =[
-	'info', 'back', 'group'
+	'info', 'back', 'group', 'task_list'
 ]
 
 agent_interaction_commands += main_commands
@@ -201,6 +202,7 @@ agent_interaction_meta = {
 	'back': HTML('Return to the previous menu.'),
 	'info': HTML('Display some nice info about the agent'),
 	'group': HTML('Edit agent group. Example: <i>group new_group</i>'),
+	'tasks_list': HTML('List all tasks for a specified agent'),
 	# ...
 }
 
@@ -318,16 +320,25 @@ def main():
 		"group_task_menu": False,
 		"shellcode_menu": False,
 		}
+	global_agent_name = ""
+	global_agent_uid = ""
+	global_listener_name = ""
+	global_group_name = ""
+	global_shellcode_name = ""
+	global_mission_name = "*" # all missions until one is selected
 	value_toolbar = "<b><style bg='ansired'>/</style></b>"
+
+	message = [
+			('class:etk', 'Mjollnir'),
+			('class:end', ' > ')
+	]
+
 	while 1: 
 		# Multi-column menu.
+		"""
 		if mjollnir_menus["main_menu"] == True:
 			comp = viewer.AutoCompletion(main_commands, main_command_family, main_family_colors, main_meta)
 			userInput = prompt(message, history=FileHistory("history.txt"), auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
-		#userInput = prompt(message, auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(''), key_bindings=bindings)
-		#elif listener_menu:
-		#    comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
-		#    userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(shellcode), key_bindings=bindings)
 		elif mjollnir_menus["shellcode_menu"] == True:
 			comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
 			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
@@ -346,6 +357,57 @@ def main():
 		elif mjollnir_menus["group_task_menu"] == True:
 			comp = viewer.AutoCompletion(group_task_commands, group_task_command_family, group_task_family_colors, group_task_meta)
 			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style, bottom_toolbar=bottom_toolbar(value_toolbar), key_bindings=bindings)
+		"""
+			
+		if mjollnir_menus["main_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(main_commands, main_command_family, main_family_colors, main_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"), auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["shellcode_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - Shellcode'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["agent_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - Agent'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(agent_commands, agent_command_family, agent_family_colors, agent_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["agent_interaction_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - Agent Interact'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(agent_interaction_commands, agent_interaction_command_family, agent_interaction_family_colors, agent_interaction_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["listener_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - Listener'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(listener_commands, listener_command_family, listener_family_colors, listener_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["registering_task_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - RTask'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(registering_task_commands, registering_task_command_family, registering_task_family_colors, registering_task_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["group_task_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - GTask'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(group_task_commands, group_task_command_family, group_task_family_colors, group_task_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
 			
 
 		if len(userInput) > 1:
@@ -502,7 +564,9 @@ def main():
 				# go to mission menu
 				pass
 			else:
+				print(global_mission_name)
 				commander.manage_mission(argInput)
+				print(global_mission_name)
 		elif cmd.lower() == "listener":
 			mjollnir_menus["main_menu"] = False
 			mjollnir_menus["agent_menu"] = False
@@ -591,7 +655,7 @@ def main():
 				menus_agent_interaction.menu_current_agent_info(global_agent_uid)
 			elif cmd.lower() == "group":
 				menus_agent_interaction.menu_edit_agent_group(global_agent_uid, argInput)
-			elif cmd.lower() == "list":
+			elif cmd.lower() == "tasks_list":
 				menus_agent_interaction.list_task(global_agent_uid)
 			else:
 				agent_name = menus_agent_interaction.menu_current_agent_name(global_agent_uid)

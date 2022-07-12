@@ -6,6 +6,7 @@ import json
 from . import db, config, decrypt, encrypt, current_dir
 from .models import Mission
 import uuid
+from datetime import datetime
 
 
 mission = Blueprint('mission', __name__)
@@ -41,9 +42,12 @@ def create_mission():
         print(str(e))
         return encrypt("[-] Cannot decrypt the request")
 
+    today = datetime.now()
+
     mission_uid = str(uuid.uuid4())
     mission_name = d
-    new_mission = Mission(mission_uid=mission_uid, mission_name=mission_name)
+    mission_created_at = today.strftime("%d/%m/%Y")
+    new_mission = Mission(mission_uid=mission_uid, mission_name=mission_name, mission_created_at=mission_created_at)
     try:
         db.session.add(new_mission)
         db.session.commit()
@@ -104,6 +108,7 @@ def list_missions():
         #print(m.mission_name)
         tmp.append(m.mission_uid)
         tmp.append(m.mission_name)
+        tmp.append(m.mission_created_at)
 
         r[m.mission_uid] = tmp
         tmp = []

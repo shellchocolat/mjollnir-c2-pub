@@ -31,8 +31,10 @@ def admin():
 def public_download(filename):
     print("[*] file requested: " + filename)
     try:
-        #return send_from_directory(directory=current_dir + config["fileserver"]["public_download"], filename=filename, as_attachment=True)
-        return send_from_directory(directory=current_dir + config["fileserver"]["public_download"], path=filename, as_attachment=True)
+        try:
+            return send_from_directory(directory=current_dir + config["fileserver"]["public_download"], filename=filename, as_attachment=True)
+        except:
+            return send_from_directory(directory=current_dir + config["fileserver"]["public_download"], path=filename, as_attachment=True)
     except Exception as e:
         print(str(e))
         return encrypt("[-] That file does not exist: " + filename)
@@ -44,8 +46,10 @@ def public_download(filename):
 def private_download(filename):
     print("[*] file requested: " + filename)
     try:
-        #return send_from_directory(directory=current_dir + config["fileserver"]["private_download"], filename=filename, as_attachment=True)
-        return send_from_directory(directory=current_dir + config["fileserver"]["private_download"], path=filename, as_attachment=True)
+        try:
+            return send_from_directory(directory=current_dir + config["fileserver"]["private_download"], filename=filename, as_attachment=True)
+        except:
+            return send_from_directory(directory=current_dir + config["fileserver"]["private_download"], path=filename, as_attachment=True)
     except Exception as e:
         print(str(e))
         return encrypt("[-] That file does not exist: " + filename)
