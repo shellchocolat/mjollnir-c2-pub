@@ -24,7 +24,9 @@
         "registering_tasks": "/registering_tasks",
         "user": "/user",
         "users": "/users",
-        "shellcode": "/shellcode"
+        "shellcode": "/shellcode",
+        "launcher": "/launcher",
+        "payload": "/payload"
     },
     "headers": {
         "mission_uid": "m",
@@ -61,7 +63,7 @@
                     "PORT": "Listening port"
                 },
                 "info": "bla bla",
-                "used_with_agents": "lin_x64_nim_http, win_x64_nim_http",
+                "used_with_agents": "lin_x64_nim_http, win_x64_nim_http, lin_x64_nim_http_status",
                 "path": "/mjollnir_listeners/listener_http.py"
             },
             "https": {
@@ -161,6 +163,44 @@
             }
         }
     },
+    "launcher":{
+        "details": {
+            "ps1_launcher_1": {
+                "parameters": ["RHOST", "RPORT", "PAYLOAD_NAME", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "RHOST": "127.0.0.1",
+                    "RPORT": "5000",
+                    "PAYLOAD_NAME": "chocolate.exe",
+                    "OUTPUT_FILENAME": "moondroper.ps1"
+                },
+                "parameters_info": {
+                    "RHOST": "mjollnir hostname",
+                    "RPORT": "mjollnir port",
+                    "PAYLOAD_NAME": "name of the agent to download/execute"
+                },
+                "builder": "/mjollnir_launchers/build_ps1.sh",
+                "info": "powershell dropper that downloads a .EXE then executes it. Use the function Start-Process() to execute the downloaded .EXE inside %APPDATA%",
+                "source_code": "/mjollnir_launchers/ps1_launcher_1.ps1"
+            },
+            "ps1_launcher_2": {
+                "parameters": ["RHOST", "RPORT", "PAYLOAD_NAME", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "RHOST": "127.0.0.1",
+                    "RPORT": "5000",
+                    "PAYLOAD_NAME": "chocolate.exe",
+                    "OUTPUT_FILENAME": "moondroper.ps1"
+                },
+                "parameters_info": {
+                    "RHOST": "mjollnir hostname",
+                    "RPORT": "mjollnir port",
+                    "PAYLOAD_NAME": "name of the agent to download/execute"
+                },
+                "builder": "/mjollnir_launchers/build_ps1.sh",
+                "info": "powershell dropper that downloads a .EXE then executes it. Use the function shellexecute() to execute the downloaded .EXE inside %TEMP%",
+                "source_code": "/mjollnir_launchers/ps1_launcher_2.ps1"
+            }
+        }
+    },
     "agent": {
         "details": {
             "win_x64_nim_icmp": {
@@ -242,6 +282,21 @@
                         "name": "INJECT_SC_EARLY_BIRD",
                         "help": "Allows to execute a shellcode inside an other process using early bird method",
                         "example": "??"
+                    },
+                    "3": {
+                        "name": "MAKE_TOKEN",
+                        "help": "Allow to create a token for a specified user",
+                        "example": "MAKE_TOKEN <logon_type (0 ,1)> <domain> <username> <password>"
+                    },
+                    "4": {
+                        "name": "CREATE_PROCESS_AS_USER",
+                        "help": "Allow to create a process as a user knowing domain - username - password of the user",
+                        "example": "CREATE_PROCESS_AS_USER <C:\\Windows\\system32\\cmd.exe> <domain> <username> <password>"
+                    },
+                    "5": {
+                        "name": "PSEXEC",
+                        "help": "Allow to create a process in a remote computer",
+                        "example": "PSEXEC <server_name> <service_name> <binary_path>"
                     }
                 }
             },
@@ -319,6 +374,43 @@
                     }
                 }
             },
+            "lin_x64_nim_http_status": {
+                "parameters": ["RHOST", "RPORT", "SLEEP_TIME", "JITTER", "FRUIT", "LOCATION", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "RHOST": "127.0.0.1",
+                    "RPORT": "4444",
+                    "SLEEP_TIME": "5",
+                    "JITTER": "2",
+                    "FRUIT": "yes",
+                    "LOCATION": "public",
+                    "OUTPUT_FILENAME": "chocolate"
+                },
+                "parameters_info": {
+                    "RHOST": "Remote host",
+                    "RPORT": "Remote port"
+                },
+                "builder": "/mjollnir_agents/build_lin_nim.sh",
+                "info": "lin / x64 / nim / http / status only",
+                "used_with_listeners": ["http_python_prod"],
+                "stages": {
+                    "how_many": "1",
+                    "0": {
+                        "source_code": "/mjollnir_agents/status_lin_http.nim"
+                    }
+                },
+                "commands": {
+                    "0": {
+                        "name": "STATUS",
+                        "help": "Tell if the agent is still up",
+                        "example": "STATUS"
+                    },
+                    "1": {
+                        "name": "KMN",
+                        "help": "Kill Me Now",
+                        "example": "KMN"
+                    }
+                }
+            },
             "lin_x64_python_http": {
                 "parameters": ["RHOST", "RPORT", "SLEEP_TIME", "JITTER", "FRUIT", "LOCATION", "OUTPUT_FILENAME"],
                 "default_parameters": {
@@ -350,6 +442,32 @@
                         "example": "CMD whoami"
                     }
                 }
+            }
+        }
+    },
+    "payload":{
+        "details": {
+            "ps1_create_scheduled_task": {
+                "parameters": ["PROGRAM", "PROGRAM_ARG", "FREQUENCY", "AT_TIME", "TASK_NAME", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "PROGRAM": "pwsh.exe",
+                    "PROGRAM_ARG": "'-ep bypass -w 1 -noni -nop -File MyScript.ps1'",
+                    "FREQUENCY": "once",
+                    "AT_TIME": "'9:15 AM'",
+                    "TASK_NAME": "My Tasks\\mytask",
+                    "OUTPUT_FILENAME": "suntask.ps1"
+                },
+                "parameters_info": {
+                    "PROGRAM": "main program to execute",
+                    "PROGRAM_ARG": "arguments of the main program",
+                    "FREQUENCY": "daily / once / atlogon",
+                    "AT_TIME": "what time: '9:15 AM'",
+                    "TASK_NAME": "task name as it would appear on the task manager",
+                    "OUTPUT_NAME": "name of the payload"
+                },
+                "builder": "/mjollnir_payloads/build_ps1_create_scheduled_task.sh",
+                "info": "a .PS1 script that allows to create a scheduled task",
+                "source_code": "/mjollnir_payloads/ps1_create_scheduled_task.ps1"
             }
         }
     }

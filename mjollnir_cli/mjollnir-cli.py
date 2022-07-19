@@ -75,7 +75,7 @@ message = [
 # main menu
 ##################################################################
 main_commands = [
-	'mission', 'listener', 'shellcode', 'agent', 'task', 'r-task', 'g-task', 'launcher', 'login', 'logout', 'first_user', 'download', 'help', 'exit',
+	'mission', 'listener', 'shellcode', 'agent', 'task', 'r-task', 'g-task', 'launcher', 'payload', 'login', 'logout', 'first_user', 'download', 'help', 'exit',
 	# ...
 ]
 
@@ -180,7 +180,7 @@ agent_meta = {
 ##################################################################
 
 agent_interaction_commands =[
-	'info', 'back', 'group', 'task_list'
+	'info', 'back', 'group', 'tasks_list'
 ]
 
 agent_interaction_commands += main_commands
@@ -319,6 +319,8 @@ def main():
 		"registering_task_menu": False,
 		"group_task_menu": False,
 		"shellcode_menu": False,
+		"launcher_menu": False,
+		"payload_menu": False,
 		}
 	global_agent_name = ""
 	global_agent_uid = ""
@@ -369,6 +371,20 @@ def main():
 		elif mjollnir_menus["shellcode_menu"] == True:
 			message = [
 				('class:etk', 'Mjollnir - Shellcode'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["launcher_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - Launcher'),
+				('class:end', ' > ')
+			]
+			comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
+			userInput = prompt(message, history=FileHistory("history.txt"),auto_suggest=AutoSuggestFromHistory(), completer=comp, complete_style=CompleteStyle.MULTI_COLUMN, style=style,  key_bindings=bindings)
+		elif mjollnir_menus["payload_menu"] == True:
+			message = [
+				('class:etk', 'Mjollnir - Payload'),
 				('class:end', ' > ')
 			]
 			comp = viewer.AutoCompletion(shellcode_commands, shellcode_command_family, shellcode_family_colors, shellcode_meta)
@@ -437,6 +453,10 @@ def main():
 					helper.help_group_task_menu()
 				elif mjollnir_menus["shellcode_menu"] == True:
 					helper.help_shellcode_menu()
+				elif mjollnir_menus["launcher_menu"] == True:
+					helper.help_launcher_menu()
+				elif mjollnir_menus["payload_menu"] == True:
+					helper.help_payload_menu()
 				elif mjollnir_menus["main_menu"] == True:
 					helper.help_main_menu()
 				else:
@@ -479,9 +499,41 @@ def main():
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = False
 			mjollnir_menus["listener_menu"] = False
+			mjollnir_menus["launcher_menu"] = False
+			mjollnir_menus["payload_menu"] = False
 			if len(argInput) == 1:
 				mjollnir_menus["shellcode_menu"] = True
 				value_toolbar = "<b><style bg='ansired'> SHELLCODE: %s</style></b>"%("")
+			else:
+				pass
+		
+		elif cmd.lower() == "launcher":
+			mjollnir_menus["main_menu"] = False
+			mjollnir_menus["agent_menu"] = False
+			mjollnir_menus["agent_interaction_menu"] = False
+			mjollnir_menus["registering_task_menu"] = False
+			mjollnir_menus["group_task_menu"] = False
+			mjollnir_menus["listener_menu"] = False
+			mjollnir_menus["shellcode_menu"] = False
+			mjollnir_menus["payload_menu"] = False
+			if len(argInput) == 1:
+				mjollnir_menus["launcher_menu"] = True
+				value_toolbar = "<b><style bg='ansired'> LAUNCHER: %s</style></b>"%("")
+			else:
+				pass
+		
+		elif cmd.lower() == "payload":
+			mjollnir_menus["main_menu"] = False
+			mjollnir_menus["agent_menu"] = False
+			mjollnir_menus["agent_interaction_menu"] = False
+			mjollnir_menus["registering_task_menu"] = False
+			mjollnir_menus["group_task_menu"] = False
+			mjollnir_menus["listener_menu"] = False
+			mjollnir_menus["shellcode_menu"] = False
+			mjollnir_menus["launcher_menu"] = False
+			if len(argInput) == 1:
+				mjollnir_menus["payload_menu"] = True
+				value_toolbar = "<b><style bg='ansired'> PAYLOAD: %s</style></b>"%("")
 			else:
 				pass
 
@@ -529,6 +581,8 @@ def main():
 			mjollnir_menus["registering_task_menu"] = True
 			mjollnir_menus["group_task_menu"] = False
 			mjollnir_menus["shellcode_menu"] = False
+			mjollnir_menus["launcher_menu"] = False
+			mjollnir_menus["payload_menu"] = False
 			if len(argInput) == 1:
 				global_agent_name = input("agent name: ")
 				value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK: %s</style></b>"%global_agent_name
@@ -548,6 +602,8 @@ def main():
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = True
 			mjollnir_menus["shellcode_menu"] = False
+			mjollnir_menus["launcher_menu"] = False
+			mjollnir_menus["payload_menu"] = False
 			if len(argInput) == 1:
 				global_group_name = input("group name: ")
 				value_toolbar = "<b><style bg='ansired'> GROUP TASK: %s</style></b>"%global_group_name
@@ -574,6 +630,8 @@ def main():
 			mjollnir_menus["registering_task_menu"] = False
 			mjollnir_menus["group_task_menu"] = False
 			mjollnir_menus["shellcode_menu"] = False
+			mjollnir_menus["launcher_menu"] = False
+			mjollnir_menus["payload_menu"] = False
 			if len(argInput) == 1:
 				mjollnir_menus["listener_menu"] = True
 				value_toolbar = "<b><style bg='ansired'> LISTENER: %s</style></b>"%("")
@@ -628,6 +686,46 @@ def main():
 					global_shellcode_name = input("shellcode name: ")
 				value_toolbar = "<b><style bg='ansired'> SHELLCODE: %s</style></b>"%global_shellcode_name
 				menus_shellcode.menu_shellcode_use(global_shellcode_name)
+			
+		# LAUNCHER MENU
+		elif mjollnir_menus["launcher_menu"] == True:
+			if cmd.lower() == "list":
+				menus_launcher.menu_launcher_list()
+			elif cmd.lower() == "generate":
+				menus_launcher.menu_launcher_generate(global_launcher_name)
+			elif cmd.lower() == "info":
+				menus_launcher.menu_launcher_info(global_launcher_name)
+			elif cmd.lower() == "set":
+				if len(argInput) >= 2:
+					param_value = (argInput[1], argInput[2])  # (CMD, calc.exe)
+					menus_launcher.menu_launcher_set(global_launcher_name, param_value)
+			elif cmd.lower() == "use":
+				if len(argInput) >= 2:
+					global_launcher_name = argInput[1]
+				else:
+					global_launcher_name = input("launcher name: ")
+				value_toolbar = "<b><style bg='ansired'> LAUNCHER: %s</style></b>"%global_launcher_name
+				menus_launcher.menu_launcher_use(global_launcher_name)
+
+		# PAYLOAD MENU
+		elif mjollnir_menus["payload_menu"] == True:
+			if cmd.lower() == "list":
+				menus_payload.menu_payload_list()
+			elif cmd.lower() == "generate":
+				menus_payload.menu_payload_generate(global_payload_name)
+			elif cmd.lower() == "info":
+				menus_payload.menu_payload_info(global_payload_name)
+			elif cmd.lower() == "set":
+				if len(argInput) >= 2:
+					param_value = (argInput[1], argInput[2])  # (CMD, calc.exe)
+					menus_payload.menu_payload_set(global_payload_name, param_value)
+			elif cmd.lower() == "use":
+				if len(argInput) >= 2:
+					global_payload_name = argInput[1]
+				else:
+					global_payload_name = input("payload name: ")
+				value_toolbar = "<b><style bg='ansired'> PAYLOAD: %s</style></b>"%global_payload_name
+				menus_payload.menu_payload_use(global_payload_name)
 
 		# AGENT MENU
 		elif mjollnir_menus["agent_menu"] == True:
@@ -748,13 +846,17 @@ if __name__ == '__main__':
 	menus_registering_task = menus.OnRegisteringTask(config, s)
 	menus_group_task = menus.GroupTask(config, s)
 	menus_shellcode = menus.Shellcode(config, s)
+	menus_launcher = menus.Launcher(config, s)
+	menus_payload = menus.Payload(config, s)
 
-	global global_agent_name, global_agent_uid, global_listener_name, global_group_name, global_shellcode_name
+	global global_agent_name, global_agent_uid, global_listener_name, global_group_name, global_shellcode_name, global_launcher_name, global_payload_name
 	global_agent_name = ""
 	global_agent_uid = ""
 	global_listener_name = ""
 	global_group_name = ""
 	global_shellcode_name = ""
+	global_launcher_name = ""
+	global_payload_name = ""
 
 	global session
 	session = PromptSession()

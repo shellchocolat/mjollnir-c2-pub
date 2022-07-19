@@ -14,6 +14,8 @@ import user
 import mission
 import listener
 import shellcode
+import launcher
+import payload
 import task
 import misc
 
@@ -645,7 +647,282 @@ class Launcher(object):
 		self.config = config
 		self.s = session
 		self.misc = misc.Misc()
+		self.launcher_parameters = {}
+		self.launcher = launcher.Launcher(self.config, self.s, self.misc)
+
+	def menu_launcher_info(self, launcher_name):
+		try:
+			launchers = self.config["launcher"]["details"][launcher_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This launcher does not exist: " + launcher_name)
+			return False
+
+		parameters = launchers["parameters"]
+		parameters_info = launchers["parameters_info"]
+		headers = ["PARAMETERS", "VALUES", "INFOS"]
+		#headers = parameters
+		values = []
+		row = []
+		#print(self.launcher_parameters)
+		#print(parameters_info)
+		for k in self.launcher_parameters.keys():
+			row.append(k)
+			row.append(self.launcher_parameters[k])
+
+			if k in parameters_info.keys():
+				row.append(parameters_info[k])
+			else:
+				row.append("")
+			
+			values.append(row)
+			row = []
+		
+		print("\n Name: " + launcher_name)
+		print(" Info: " + launchers["info"])
+		print()
+		tt.print(values, header=headers)
+
+		return True
+
+	def menu_launcher_set(self, launcher_name, param_value):
+		# param_value = (param, value) = (CMD, calc.exe)
+		try:
+			launchers = self.config["launcher"]["details"][launcher_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This launcher does not exist: " + launcher_name)
+			return False
+
+		param = param_value[0]
+		if param.upper() in launchers["parameters"]:
+			self.launcher_parameters[param.upper()] = param_value[1]
+		else:
+			return False
+
+		return True
+	
+	def menu_launcher_list(self):
+		launchers = self.config["launcher"]
+		launchers_details= launchers["details"]
+		launcher_details_keys = launchers_details.keys()
+		headers = ["name", "info"]
+		values = []
+		row = []
+		for k in launcher_details_keys:
+			row.append(k)
+			row.append(launchers_details[k]["info"])
+			values.append(row)
+			row = []
+		
+		tt.print(values, header=headers)
+		return True
+
+	def menu_launcher_generate(self, launcher_name):
+		try:
+			launchers = self.config["launcher"]["details"][launcher_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This launcher does not exist: " + launcher_name)
+			return False
+
+		for k in self.launcher_parameters.keys():
+			if self.launcher_parameters[k] == "":
+				print("[-] You must fill all the required parameters")
+				return False
 
 
+		param_to_send = {}
+		for k in self.launcher_parameters.keys():
+			param_to_send[k] = self.launcher_parameters[k]
+
+		param_to_send["launcher_name"] = launcher_name
+
+
+		self.launcher.generate_launcher(launcher_name, param_to_send)
+
+		return True
+
+	def menu_launcher_use(self, launcher_name):
+		self.launcher_parameters = {}
+		# retrieve all the launchers name to verify that the name entered by the user exists
+		try:
+			launchers = self.config["launcher"]["details"][launcher_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This launcher does not exist: " + launcher_name)
+			return False
+
+		# retrieve parameters needed for the selected launcher
+		parameters = launchers["parameters"]
+		default_parameters = launchers["default_parameters"]
+		parameters_info = launchers["parameters_info"]
+		headers = ["PARAMETERS", "VALUES", "INFOS"]
+		values = []
+		row = []
+		for p in parameters:
+			row.append(p)
+			if p in default_parameters.keys():
+				row.append(default_parameters[p])
+				self.launcher_parameters[p] = default_parameters[p]
+			else:
+				row.append("")
+				self.launcher_parameters[p] = ""
+
+			if p in parameters_info.keys():
+				row.append(parameters_info[p])
+			else:
+				row.append("")
+			
+			values.append(row)
+			row = []
+
+		print("\n Name: " + launcher_name)
+		print(" Info: " + launchers["info"])
+		print()
+		tt.print(values, header=headers)
+		return True
+
+
+class Payload(object):
+	def __init__(self, config, session):
+		self.config = config
+		self.s = session
+		self.misc = misc.Misc()
+		self.payload_parameters = {}
+		self.payload = payload.Payload(self.config, self.s, self.misc)
+
+	def menu_payload_info(self, payload_name):
+		try:
+			payloads = self.config["payload"]["details"][payload_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This payload does not exist: " + payload_name)
+			return False
+
+		parameters = payloads["parameters"]
+		parameters_info = payloads["parameters_info"]
+		headers = ["PARAMETERS", "VALUES", "INFOS"]
+		#headers = parameters
+		values = []
+		row = []
+		#print(self.payload_parameters)
+		#print(parameters_info)
+		for k in self.payload_parameters.keys():
+			row.append(k)
+			row.append(self.payload_parameters[k])
+
+			if k in parameters_info.keys():
+				row.append(parameters_info[k])
+			else:
+				row.append("")
+			
+			values.append(row)
+			row = []
+		
+		print("\n Name: " + payload_name)
+		print(" Info: " + payloads["info"])
+		print()
+		tt.print(values, header=headers)
+
+		return True
+
+	def menu_payload_set(self, payload_name, param_value):
+		# param_value = (param, value) = (CMD, calc.exe)
+		try:
+			payloads = self.config["payload"]["details"][payload_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This payload does not exist: " + payload_name)
+			return False
+
+		param = param_value[0]
+		if param.upper() in payloads["parameters"]:
+			self.payload_parameters[param.upper()] = param_value[1]
+		else:
+			return False
+
+		return True
+	
+	def menu_payload_list(self):
+		payloads = self.config["payload"]
+		payloads_details= payloads["details"]
+		payload_details_keys = payloads_details.keys()
+		headers = ["name", "info"]
+		values = []
+		row = []
+		for k in payload_details_keys:
+			row.append(k)
+			row.append(payloads_details[k]["info"])
+			values.append(row)
+			row = []
+		
+		tt.print(values, header=headers)
+		return True
+
+	def menu_payload_generate(self, payload_name):
+		try:
+			payloads = self.config["payload"]["details"][payload_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This payload does not exist: " + payload_name)
+			return False
+
+		for k in self.payload_parameters.keys():
+			if self.payload_parameters[k] == "":
+				print("[-] You must fill all the required parameters")
+				return False
+
+
+		param_to_send = {}
+		for k in self.payload_parameters.keys():
+			param_to_send[k] = self.payload_parameters[k]
+
+		param_to_send["payload_name"] = payload_name
+
+
+		self.payload.generate_payload(payload_name, param_to_send)
+
+		return True
+
+	def menu_payload_use(self, payload_name):
+		self.payload_parameters = {}
+		# retrieve all the payloads name to verify that the name entered by the user exists
+		try:
+			payloads = self.config["payload"]["details"][payload_name]
+		except Exception as e:
+			#print(str(e))
+			print("[-] This payload does not exist: " + payload_name)
+			return False
+
+		# retrieve parameters needed for the selected payload
+		parameters = payloads["parameters"]
+		default_parameters = payloads["default_parameters"]
+		parameters_info = payloads["parameters_info"]
+		headers = ["PARAMETERS", "VALUES", "INFOS"]
+		values = []
+		row = []
+		for p in parameters:
+			row.append(p)
+			if p in default_parameters.keys():
+				row.append(default_parameters[p])
+				self.payload_parameters[p] = default_parameters[p]
+			else:
+				row.append("")
+				self.payload_parameters[p] = ""
+
+			if p in parameters_info.keys():
+				row.append(parameters_info[p])
+			else:
+				row.append("")
+			
+			values.append(row)
+			row = []
+
+		print("\n Name: " + payload_name)
+		print(" Info: " + payloads["info"])
+		print()
+		tt.print(values, header=headers)
+		return True
 
 

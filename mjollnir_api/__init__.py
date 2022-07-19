@@ -61,6 +61,12 @@ def create_app():
     from .shellcode import shellcode as shellcode_blueprint
     app.register_blueprint(shellcode_blueprint)
 
+    from .launcher import launcher as launcher_blueprint
+    app.register_blueprint(launcher_blueprint)
+
+    from .payload import payload as payload_blueprint
+    app.register_blueprint(payload_blueprint)
+
     from .task import task as task_blueprint
     app.register_blueprint(task_blueprint)
 

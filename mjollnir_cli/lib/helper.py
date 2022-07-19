@@ -71,6 +71,14 @@ class Helper(object):
         self.help_main_menu()
         return True
 
+    def help_launcher_menu(self):
+        self.help_main_menu()
+        return True
+
+    def help_payload_menu(self):
+        self.help_main_menu()
+        return True
+
     def help_group_task_menu(self):
         self.help_main_menu()
         return True

