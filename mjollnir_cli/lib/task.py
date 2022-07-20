@@ -103,18 +103,33 @@ class Task():
 		return True
 
 	def delete_all_tasks_for_agent(self, agents_uid):
-		# DELETE mjollir_url/hidden_route/task/agent_uid
+		# DELETE mjollir_url/hidden_route/tasks/agent_uid
 		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
-		endpoint = self.config["endpoints"]["task"]
+		endpoint = self.config["endpoints"]["tasks"]
 		for agent_uid in agents_uid:
 			data = self.misc.encrypt(agent_uid)
 			r = self.s.delete(url+endpoint, data=data)
 			if r.status_code == 200:
 				print(self.misc.decrypt(r.content))
 			else:
-				print("[-] Cannot delete all task for agent: " + agent_uid)
+				print("[-] Cannot delete all tasks for agent: " + agent_uid)
 				
 		return True
+
+	def delete_task(self, task_uid):
+		# DELETE mjollir_url/hidden_route/task
+		url = self.config["mjollnir_c2_url"] + self.config["hidden_route"]
+		endpoint = self.config["endpoints"]["task"]
+
+		data = self.misc.encrypt(task_uid)
+		r = self.s.delete(url+endpoint, data=data)
+		if r.status_code == 200:
+			print(self.misc.decrypt(r.content))
+		else:
+			print("[-] Cannot delete task: " + task_uid)
+				
+		return True
+
 
 class OnRegisteringTask():
 	def __init__(self, config, session, misc):
@@ -160,7 +175,7 @@ class OnRegisteringTask():
 		endpoint = self.config["endpoints"]["registering_task"]
 		for task_uid in tasks_uid:
 			data = self.misc.encrypt(task_uid)
-			r = self.s.delete(url+endpoint + "?task_uid=" + task_uid, data=data)
+			r = self.s.delete(url+endpoint, data=data)
 			if r.status_code == 200:
 				print(self.misc.decrypt(r.content))
 			else:

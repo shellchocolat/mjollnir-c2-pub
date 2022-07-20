@@ -93,7 +93,12 @@ class Commander(object):
 				self.task.get_result("", task_uid)
 			else:
 				print("[-] Need a task uid: task -r <task_uid>")
-
+		if action == "-d": # delete a task
+			if L >=3: # task -d task_uid
+				task_uid = argInput[2]
+				self.task.delete_task(task_uid)
+			else:
+				print("[-] Need a task uid: task -d <task_uid>")
 		else:
 			print("[-] Action not found: " + action)
 				

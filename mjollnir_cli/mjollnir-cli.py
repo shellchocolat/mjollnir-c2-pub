@@ -585,14 +585,14 @@ def main():
 			mjollnir_menus["payload_menu"] = False
 			if len(argInput) == 1:
 				global_agent_name = input("agent name: ")
-				value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK: %s</style></b>"%global_agent_name
-			elif len(argInput) >= 2:
-				global_agent_name = argInput[1]
-				value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK: %s</style></b>"%global_agent_name
+				mjollnir_menus["main_menu"] = False
+				mjollnir_menus["registering_task_menu"] = True
+				value_toolbar = "<b><style bg='ansired'> ON REGISTERING TASK</style></b>"
 			else:
-				mjollnir_menus["main_menu"] = True
-				mjollnir_menus["registering_task_menu"] = False
-				global_agent_name = ""
+				mjollnir_menus["main_menu"] = False
+				mjollnir_menus["registering_task_menu"] = True
+				#commander.manage_registering_task(argInput)
+
 
 		elif cmd.lower() == "g-task":
 			mjollnir_menus["main_menu"] = False
@@ -775,8 +775,6 @@ def main():
 		elif mjollnir_menus["registering_task_menu"] == True:
 			if cmd.lower() == "list":
 				menus_registering_task.registering_task_list(global_agent_name)
-			elif cmd.lower() == "delete":
-				menus_registering_task.registering_task_delete(argInput)
 			else:
 				all_agent_commands = config["agent"]["details"][global_agent_name]["commands"]
 				found = False
@@ -803,7 +801,7 @@ def main():
 			else:
 				# can't determine easily if CMD existe because it could have different
 				# agent within the same group
-					menus_group_task.group_task_create(global_group_name, argInput)
+				menus_group_task.group_task_create(global_group_name, argInput)
 
 
 		# reset argInput
