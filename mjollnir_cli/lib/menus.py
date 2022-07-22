@@ -317,7 +317,7 @@ class Shellcode(object):
 
 		return True
 
-	def menu_shellcode_set(self, shellcode_name, param_value):
+	def menu_shellcode_set(self, shellcode_name, argInput):
 		# param_value = (param, value) = (CMD, calc.exe)
 		try:
 			shellcodes = self.config["shellcode"]["details"][shellcode_name]
@@ -325,13 +325,23 @@ class Shellcode(object):
 			#print(str(e))
 			print("[-] This shellcode does not exist: " + shellcode_name)
 			return False
-
-		param = param_value[0]
-		if param.upper() in shellcodes["parameters"]:
-			self.shellcode_parameters[param.upper()] = param_value[1]
-		else:
+		
+		L = len(argInput)
+		if L == 0:
 			return False
 
+		set_cmd = argInput[0].upper()
+		set_cmd_arg = ""
+		for c in argInput[1]:
+			set_cmd_arg += c + " "
+
+		set_cmd_arg = set_cmd_arg[:-1] # remove the last " "
+		if set_cmd in shellcodes["parameters"]:
+			#self.shellcode_parameters[param.upper()] = param_value[1]
+			self.shellcode_parameters[set_cmd] = set_cmd_arg
+		else:
+			return False
+		
 		return True
 	
 	def menu_shellcode_list(self):
@@ -782,7 +792,6 @@ class Launcher(object):
 		print()
 		tt.print(values, header=headers)
 		return True
-
 
 class Payload(object):
 	def __init__(self, config, session):

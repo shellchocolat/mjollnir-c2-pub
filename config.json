@@ -158,7 +158,7 @@
                     "CMD": "Command to execute"
                 },
                 "builder": "/mjollnir_shellcodes/windows/x64/build_win_x64_WinExec.sh",
-                "info": "This shellcode uses WinExec() in order to launch a command. In order to find WinExec() address's, the shellcode parses the PEB, then look for the string 'WinE' that correspond to the first letters of WinExec",
+                "info": "This shellcode uses WinExec() in order to launch a command. In order to find WinExec() address's, the shellcode parses the PEB, then look for the string 'WinE' that corresponds to the first letters of WinExec",
                 "source_code": "/mjollnir_shellcodes/windows/x64/win_x64_WinExec.asm"
             }
         }
@@ -339,6 +339,48 @@
                         "name": "INJECT_SC_EARLY_BIRD",
                         "help": "Allows to execute a shellcode inside an other process using early bird method",
                         "example": "??"
+                    },
+                    "3": {
+                        "name": "KMN",
+                        "help": "Kill Me Now",
+                        "example": "KMN"
+                    }
+                }
+            },
+            "win_x64_nim_http_extra_minimal": {
+                "parameters": ["RHOST", "RPORT", "SLEEP_TIME", "JITTER", "FRUIT", "LOCATION", "OUTPUT_FILENAME"],
+                "default_parameters": {
+                    "RHOST": "127.0.0.1",
+                    "RPORT": "4444",
+                    "SLEEP_TIME": "5",
+                    "JITTER": "2",
+                    "FRUIT": "yes",
+                    "LOCATION": "public",
+                    "OUTPUT_FILENAME": "chocolate.exe"
+                },
+                "parameters_info": {
+                    "RHOST": "Remote host",
+                    "RPORT": "Remote port"
+                },
+                "builder": "/mjollnir_agents/build_win_nim.sh",
+                "info": "win / x64 / nim / http",
+                "used_with_listeners": ["http_python_prod"],
+                "stages": {
+                    "how_many": "1",
+                    "0": {
+                        "source_code": "/mjollnir_agents/agent_win_http_minimal.nim"
+                    }
+                },
+                "commands": {
+                    "0": {
+                        "name": "CMD",
+                        "help": "Allows to execute a 'CMD' command",
+                        "example": "CMD whoami /all"
+                    },
+                    "1": {
+                        "name": "KMN",
+                        "help": "Kill Me Now",
+                        "example": "KMN"
                     }
                 }
             },

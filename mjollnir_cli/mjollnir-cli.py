@@ -677,7 +677,7 @@ def main():
 				menus_shellcode.menu_shellcode_info(global_shellcode_name)
 			elif cmd.lower() == "set":
 				if len(argInput) >= 2:
-					param_value = (argInput[1], argInput[2])  # (CMD, calc.exe)
+					param_value = (argInput[1], argInput[2:])  # (CMD, calc.exe)
 					menus_shellcode.menu_shellcode_set(global_shellcode_name, param_value)
 			elif cmd.lower() == "use":
 				if len(argInput) >= 2:
