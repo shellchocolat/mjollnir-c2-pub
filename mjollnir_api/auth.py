@@ -39,7 +39,7 @@ def first_user():
     user_role = "admin"
     user_uid = str(uuid.uuid4())
 
-    user = User.query.filter_by(user_name=user_name).first()
+    user = User.query.first()
 
     if user:
         return encrypt("[-] first_user() cannot be used anymore")
